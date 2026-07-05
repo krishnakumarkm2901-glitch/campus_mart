@@ -1,0 +1,208 @@
+
+{% extends "base.html" %}
+{% block title %}CampusMart – College Marketplace | Buy & Sell Used Items{% endblock %}
+{% block meta_description %}CampusMart is the trusted college marketplace for students to buy and sell used academic books, lab coats, calculators, electronics, and hostel items.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ════════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Verified College Students Only
+      </div>
+      <h1>Buy & Sell College <span class="accent">Essentials</span><br>Within Your Campus</h1>
+      <p>From textbooks to lab coats, calculators to hostel items — find everything you need at student-friendly prices.</p>
+
+      <!-- Search Box -->
+      <div class="hero-search">
+        <div class="hero-search-box">
+          <div class="hero-search-icon">🔍</div>
+          <input type="text" id="hero-search" class="hero-search-input"
+            placeholder="Search for books, calculators, lab coats…" autocomplete="off">
+          <select id="hero-search-cat" class="hero-search-category">
+            <option value="">All Categories</option>
+            <option>Engineering Books</option>
+            <option>Lab Coats</option>
+            <option>Scientific Calculators</option>
+            <option>Drawing Instruments</option>
+            <option>Electronics</option>
+            <option>Hostel Items</option>
+            <option>Stationery</option>
+            <option>Bags</option>
+            <option>Cycles</option>
+          </select>
+          <button class="hero-search-btn" id="hero-search-btn">Search →</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-number" id="stat-products">0</span>
+          <span class="hero-stat-label">Products Listed</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">10</span>
+          <span class="hero-stat-label">Categories</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">₹0</span>
+          <span class="hero-stat-label">Platform Fee</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">100%</span>
+          <span class="hero-stat-label">Student-Only</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATEGORIES ═════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle">Find exactly what you need</p>
+      </div>
+      <a href="/categories" class="btn btn-outline btn-sm">View All →</a>
+    </div>
+
+    <div class="category-grid reveal">
+      
+      <a href="/search?category=Engineering+Books" class="category-card">
+        <div class="category-icon cat-books">📚</div>
+        <div class="category-name">Engineering Books</div>
+        <div class="category-count" data-cat-count="Engineering Books">Loading…</div>
+      </a>
+      <a href="/search?category=Lab+Coats" class="category-card">
+        <div class="category-icon cat-lab">🥼</div>
+        <div class="category-name">Lab Coats</div>
+        <div class="category-count" data-cat-count="Lab Coats">Loading…</div>
+      </a>
+      <a href="/search?category=Scientific+Calculators" class="category-card">
+        <div class="category-icon cat-calc">🧮</div>
+        <div class="category-name">Calculators</div>
+        <div class="category-count" data-cat-count="Scientific Calculators">Loading…</div>
+      </a>
+      <a href="/search?category=Drawing+Instruments" class="category-card">
+        <div class="category-icon cat-drawing">📐</div>
+        <div class="category-name">Drawing Sets</div>
+        <div class="category-count" data-cat-count="Drawing Instruments">Loading…</div>
+      </a>
+      <a href="/search?category=Electronics" class="category-card">
+        <div class="category-icon cat-electronics">💻</div>
+        <div class="category-name">Electronics</div>
+        <div class="category-count" data-cat-count="Electronics">Loading…</div>
+      </a>
+      <a href="/search?category=Hostel+Items" class="category-card">
+        <div class="category-icon cat-hostel">🛏</div>
+        <div class="category-name">Hostel Items</div>
+        <div class="category-count" data-cat-count="Hostel Items">Loading…</div>
+      </a>
+      <a href="/search?category=Stationery" class="category-card">
+        <div class="category-icon cat-stationery">✏️</div>
+        <div class="category-name">Stationery</div>
+        <div class="category-count" data-cat-count="Stationery">Loading…</div>
+      </a>
+      <a href="/search?category=Bags" class="category-card">
+        <div class="category-icon cat-bags">🎒</div>
+        <div class="category-name">Bags</div>
+        <div class="category-count" data-cat-count="Bags">Loading…</div>
+      </a>
+      <a href="/search?category=Cycles" class="category-card">
+        <div class="category-icon cat-cycles">🚲</div>
+        <div class="category-name">Cycles</div>
+        <div class="category-count" data-cat-count="Cycles">Loading…</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RECENTLY ADDED ═════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <h2 class="section-title">🆕 Recently Added</h2>
+        <p class="section-subtitle">Fresh listings from your campus</p>
+      </div>
+      <a href="/search?sort=newest" class="btn btn-outline btn-sm">See All →</a>
+    </div>
+    <div class="product-grid reveal" id="featured-products">
+      <!-- Loaded by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROMO BANNER ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="promo-banner reveal">
+      <div>
+        <h2>Have something to sell?</h2>
+        <p>List your unused books, equipment, and hostel items in under 2 minutes.<br>Reach hundreds of verified students on campus.</p>
+      </div>
+      <a href="{% if current_user %}/sell{% else %}/login{% endif %}" class="btn btn-primary btn-lg">
+        + Start Selling Free
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ POPULAR PRODUCTS ════════════════════════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <h2 class="section-title">🔥 Budget-Friendly Picks</h2>
+        <p class="section-subtitle">Great deals at the lowest prices</p>
+      </div>
+      <a href="/search?sort=price_asc" class="btn btn-outline btn-sm">See All →</a>
+    </div>
+    <div class="product-grid reveal" id="popular-products">
+      <!-- Loaded by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">How CampusMart Works</h2>
+      <p class="section-subtitle">Simple, safe, and exclusively for college students</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:40px;" class="reveal">
+      <div class="card card-body text-center">
+        <div style="font-size:48px;margin-bottom:16px;">🔐</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">1. Login with Google</h3>
+        <p style="color:var(--text-muted);font-size:14px;">Sign in with your college Google account. Only verified students can join.</p>
+      </div>
+      <div class="card card-body text-center">
+        <div style="font-size:48px;margin-bottom:16px;">📸</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">2. Post Your Listing</h3>
+        <p style="color:var(--text-muted);font-size:14px;">Upload photos, set a price, and describe your item. Our admin reviews it before publishing.</p>
+      </div>
+      <div class="card card-body text-center">
+        <div style="font-size:48px;margin-bottom:16px;">📞</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">3. Connect & Meet</h3>
+        <p style="color:var(--text-muted);font-size:14px;">Buyers call sellers directly. No middleman, no hidden fees. Meet on campus to exchange.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}

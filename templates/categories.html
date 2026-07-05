@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}All Categories – CampusMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/categories.css') }}">
+{% endblock %}
+
+{% block content %}
+<div style="padding:40px 0 60px;">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:40px;">
+      <h1 class="section-title">Browse All Categories</h1>
+      <p class="section-subtitle">Find exactly what you need for college life</p>
+    </div>
+
+    <div class="category-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+      {% set categories = [
+        ('Engineering Books', '📚', 'cat-books', 'Textbooks, reference books, lab manuals for all semesters'),
+        ('Lab Coats', '🥼', 'cat-lab', 'White lab coats in various sizes for practical sessions'),
+        ('Scientific Calculators', '🧮', 'cat-calc', 'Casio, Texas Instruments, and other scientific calculators'),
+        ('Drawing Instruments', '📐', 'cat-drawing', 'Drawing sets, scales, compasses, T-squares and more'),
+        ('Electronics', '💻', 'cat-electronics', 'Laptops, phones, tablets, earphones and accessories'),
+        ('Hostel Items', '🛏', 'cat-hostel', 'Buckets, mattresses, study lamps, appliances and more'),
+        ('Stationery', '✏️', 'cat-stationery', 'Pens, notebooks, files, geometry boxes and supplies'),
+        ('Bags', '🎒', 'cat-bags', 'Backpacks, laptop bags, and carry bags'),
+        ('Cycles', '🚲', 'cat-cycles', 'Bicycles for campus commuting'),
+      ] %}
+
+      {% for name, icon, cls, desc in categories %}
+        <a href="/search?category={{ name | urlencode }}" class="category-card" style="padding:32px 20px;gap:16px;">
+          <div class="category-icon {{ cls }}" style="width:72px;height:72px;font-size:34px;">{{ icon }}</div>
+          <div style="text-align:center;">
+            <div class="category-name" style="font-size:15px;margin-bottom:6px;">{{ name }}</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">{{ desc }}</div>
+          </div>
+          <span class="badge badge-muted" data-cat-count="{{ name }}">Loading…</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const counts = await API.get('/api/products/categories-count');
+    document.querySelectorAll('[data-cat-count]').forEach(el => {
+      const cat = el.dataset.catCount;
+      const n = counts[cat] || 0;
+      el.textContent = `${n} item${n !== 1 ? 's' : ''}`;
+    });
+  } catch (e) { /* non-critical */ }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Search Results – CampusMart{% endblock %}
+
+{% block extra_css %}
+<style>
+.search-page { padding: 32px 0 60px; }
+.search-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+.filter-sidebar { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: sticky; top: calc(var(--navbar-height) + 16px); overflow: hidden; }
+.filter-header { padding: 16px 20px; background: var(--primary); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.filter-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.filter-section:last-child { border-bottom: none; }
+.filter-section-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 12px; }
+.sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.sort-bar select { padding: 8px 36px 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13.5px; font-family: inherit; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; color: var(--text); background-color: #fff; }
+.price-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.price-range input { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; width: 100%; outline: none; }
+.price-range input:focus { border-color: var(--primary); }
+@media (max-width: 900px) { .search-layout { grid-template-columns: 1fr; } .filter-sidebar { position: static; display: none; } .filter-sidebar.open { display: block; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-page">
+  <div class="container">
+    <!-- Search Bar -->
+    <div style="background:var(--primary);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;gap:12px;align-items:center;">
+      <input type="text" id="search-input" class="form-control"
+        style="flex:1;background:rgba(255,255,255,0.15);border-color:transparent;color:#fff;"
+        placeholder="Search products…" oninput="onSearchInput()">
+      <button class="btn btn-accent" onclick="applyFilters()">🔍 Search</button>
+    </div>
+
+    <div class="search-layout">
+      <!-- ── Filters Sidebar ────────────────────────────── -->
+      <div class="filter-sidebar" id="filter-sidebar">
+        <div class="filter-header">🔧 Filters</div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Category</div>
+          <select class="form-control" id="filter-category" onchange="applyFilters()">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Condition</div>
+          <select class="form-control" id="filter-condition" onchange="applyFilters()">
+            <option value="">Any Condition</option>
+            <option>New</option>
+            <option>Like New</option>
+            <option>Good</option>
+            <option>Fair</option>
+            <option>Used</option>
+          </select>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Price Range (₹)</div>
+          <div class="price-range">
+            <input type="number" id="filter-min-price" placeholder="Min" min="0">
+            <input type="number" id="filter-max-price" placeholder="Max" min="0">
+          </div>
+          <button class="btn btn-outline btn-sm btn-full" style="margin-top:10px;" onclick="applyFilters()">Apply</button>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Department</div>
+          <input type="text" class="form-control" id="filter-department"
+            placeholder="e.g. Computer Science" oninput="onSearchInput()">
+        </div>
+
+        <div class="filter-section">
+          <button class="btn btn-ghost btn-sm btn-full" onclick="clearAllFilters()">✕ Clear All Filters</button>
+        </div>
+      </div>
+
+      <!-- ── Results ───────────────────────────────────── -->
+      <div>
+        <div class="sort-bar">
+          <h1 id="search-page-title" style="font-size:20px;font-weight:800;color:var(--text);">All Products</h1>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button class="btn btn-outline btn-sm" style="display:none;" id="mobile-filter-btn"
+              onclick="toggleFilters()">⚙ Filters</button>
+            <span style="font-size:13px;color:var(--text-muted);" id="result-count"></span>
+            <select id="sort-select" onchange="applyFilters()">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid" id="results-grid">
+          <!-- Loaded by JS -->
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+        <div style="text-align:center;margin-top:8px;font-size:13px;color:var(--text-muted);" id="page-info"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Show mobile filter button
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('mobile-filter-btn');
+    if (window.innerWidth <= 900 && btn) btn.style.display = 'inline-flex';
+  });
+</script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════════════════
+   Sell Product / Edit Product Page
+   ═══════════════════════════════════════════════════════ */
+
+.sell-page {
+  padding: 36px 0 60px;
+}
+
+.sell-header {
+  margin-bottom: 32px;
+}
+
+.sell-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.sell-header p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+/* ── Steps Progress ───────────────────────────────────── */
+.steps-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.step-item:last-child { flex: 0; }
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: var(--transition);
+  flex-shrink: 0;
+  z-index: 1;
+  position: relative;
+}
+
+.step-item.active .step-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.step-item.done .step-circle {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
+.step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 6px;
+  white-space: nowrap;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.step-item.active .step-label { color: var(--primary); }
+.step-item.done .step-label { color: var(--success); }
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  margin: 0 -1px;
+  transition: var(--transition);
+}
+
+.step-connector.done { background: var(--success); }
+
+/* ── Form Layout ──────────────────────────────────────── */
+.sell-form-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.sell-form-section {
+  padding: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sell-form-section:last-child { border-bottom: none; }
+
+.sell-form-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sell-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.sell-form-grid .span-2 { grid-column: 1 / -1; }
+
+/* ── Image Upload ─────────────────────────────────────── */
+.image-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--bg);
+  position: relative;
+}
+
+.image-drop-zone:hover, .image-drop-zone.dragover {
+  border-color: var(--primary-light);
+  background: var(--bg-secondary);
+}
+
+.image-drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.drop-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  color: var(--primary-light);
+  opacity: 0.6;
+}
+
+.drop-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.drop-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.drop-hint span {
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+/* ── Image Previews ───────────────────────────────────── */
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.image-preview-item {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  background: var(--bg);
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-preview-item .first-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: var(--accent);
+  color: var(--primary-dark);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: var(--transition);
+}
+
+.remove-image-btn:hover { background: var(--danger); }
+
+/* ── Price Input ──────────────────────────────────────── */
+.price-input-wrapper {
+  position: relative;
+}
+
+.price-prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.price-input-wrapper .form-control {
+  padding-left: 30px;
+}
+
+/* ── Condition Cards ──────────────────────────────────── */
+.condition-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.condition-option {
+  flex: 1;
+  min-width: 80px;
+}
+
+.condition-option input { display: none; }
+
+.condition-option label {
+  display: block;
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fff;
+  color: var(--text-muted);
+}
+
+.condition-option input:checked + label {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.condition-option label:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ── Form Footer ──────────────────────────────────────── */
+.sell-form-footer {
+  padding: 24px 28px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* ── Tips Sidebar ─────────────────────────────────────── */
+.sell-tips {
+  position: sticky;
+  top: calc(var(--navbar-height) + 16px);
+}
+
+.sell-tip-card {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 16px;
+}
+
+.sell-tip-card h4 {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sell-tip-card ul {
+  list-style: none;
+}
+
+.sell-tip-card ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.sell-tip-card ul li::before {
+  content: '✓';
+  color: var(--success-light);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Page Layout ──────────────────────────────────────── */
+.sell-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .sell-layout {
+    grid-template-columns: 1fr;
+  }
+  .sell-tips {
+    position: static;
+    order: -1;
+  }
+  .sell-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

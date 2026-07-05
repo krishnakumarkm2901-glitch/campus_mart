@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}My Profile – CampusMart{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-page { padding: 40px 0 60px; }
+.profile-layout { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
+.profile-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+.profile-card-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); padding: 36px 24px; text-align: center; }
+.profile-photo-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
+.profile-photo { width: 90px; height: 90px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); object-fit: cover; display: none; }
+.profile-avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: var(--primary-dark); margin: 0 auto; }
+.profile-card-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.profile-card-email { font-size: 13px; color: rgba(255,255,255,0.7); }
+.profile-body { padding: 24px; }
+.profile-field { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.profile-field:last-child { border-bottom: none; }
+.profile-field-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.profile-field-value { font-size: 14.5px; font-weight: 600; color: var(--text); }
+.edit-form { display: none; }
+@media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="container-sm">
+    <div class="section-header">
+      <h1 class="section-title">👤 My Profile</h1>
+      <button class="btn btn-outline" id="edit-btn" onclick="toggleEdit()">✏️ Edit Profile</button>
+    </div>
+
+    <div class="profile-layout">
+      <!-- ── Profile Card ────────────────────────────────── -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <div class="profile-photo-wrap">
+            <img id="profile-photo" class="profile-photo" src="" alt="Profile">
+            <div id="profile-avatar" class="profile-avatar">?</div>
+          </div>
+          <div class="profile-card-name" id="profile-name">Loading…</div>
+          <div class="profile-card-email" id="profile-email"></div>
+        </div>
+        <div class="profile-body" id="display-section">
+          <div class="profile-field">
+            <div class="profile-field-label">📱 Phone</div>
+            <div class="profile-field-value" id="display-phone">—</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field-label">🎓 Department</div>
+            <div class="profile-field-value" id="display-department">—</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field-label">📅 Year</div>
+            <div class="profile-field-value" id="display-year">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Info + Edit Form ───────────────────────────── -->
+      <div>
+        <div class="card card-body" style="margin-bottom:20px;">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--primary);">Account Information</h3>
+          <div style="font-size:13.5px;color:var(--text-muted);line-height:1.8;">
+            <p>🔒 Your <strong>email address</strong> is linked to your Google account and cannot be changed.</p>
+            <p>📝 You can update your <strong>phone number</strong>, <strong>department</strong>, and <strong>year</strong> anytime.</p>
+            <p>📞 Your phone number will be shared with buyers who want to contact you about your listings.</p>
+          </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="edit-form card" id="edit-form">
+          <div class="card-header">✏️ Edit Profile Details</div>
+          <div class="card-body">
+            <form>
+              <div class="form-group">
+                <label class="form-label" for="profile-phone">Phone Number</label>
+                <input type="tel" id="profile-phone" class="form-control" placeholder="10-digit mobile number">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profile-department">Department</label>
+                <input type="text" id="profile-department" class="form-control" placeholder="e.g. Computer Science Engineering">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profile-year">Year of Study</label>
+                <select id="profile-year" class="form-control">
+                  <option value="">Select year…</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="Alumni">Alumni</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:12px;justify-content:flex-end;">
+                <button type="button" class="btn btn-outline" onclick="toggleEdit()">Cancel</button>
+                <button type="submit" id="save-btn" class="btn btn-primary">💾 Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card card-body" style="margin-top:20px;">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--primary);">Quick Links</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="/my-listings" class="btn btn-outline" style="justify-content:flex-start;">📦 My Listings</a>
+            <a href="/wishlist" class="btn btn-outline" style="justify-content:flex-start;">🤍 My Wishlist</a>
+            <a href="/sell" class="btn btn-accent" style="justify-content:flex-start;">+ Sell a Product</a>
+            <a href="/auth/logout" class="btn btn-ghost" style="justify-content:flex-start;color:var(--danger);">🚪 Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

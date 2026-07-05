@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Login – CampusMart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card admin-auth-card">
+      <div class="auth-logo"><h1>Campus<span>Mart</span></h1><p>Administration</p></div>
+      <form id="admin-login-form">
+        <label for="admin-username">Username</label>
+        <input id="admin-username" name="username" type="text" autocomplete="username" required>
+        <label for="admin-password">Password</label>
+        <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+        <p id="login-error" role="alert" aria-live="polite"></p>
+        <button id="login-btn" class="google-btn" type="submit">Sign in</button>
+      </form>
+      <div style="text-align:center;margin-top:20px"><a href="{{ url_for('auth.login_page') }}">Student login</a></div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

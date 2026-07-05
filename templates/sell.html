@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit Product{% else %}Sell a Product{% endif %} – CampusMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sell.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="sell-page">
+  <div class="container">
+    <!-- Page data for JS -->
+    <div id="page-data"
+      data-editing="{{ 'true' if editing else 'false' }}"
+      data-product-id="{{ product_id or '' }}">
+    </div>
+
+    <!-- Header -->
+    <div class="sell-header">
+      <h1 id="sell-title">📸 List a Product for Sale</h1>
+      <p id="sell-subtitle">Fill in the details below. Your listing will be reviewed by admin before going live.</p>
+    </div>
+
+    <div class="sell-layout">
+      <!-- ── Main Form ──────────────────────────────────── -->
+      <div>
+        <form id="sell-form" enctype="multipart/form-data">
+
+          <!-- Product Info -->
+          <div class="sell-form-card">
+            <div class="sell-form-section">
+              <div class="sell-form-section-title">📝 Product Information</div>
+              <div class="sell-form-grid">
+                <div class="form-group span-2">
+                  <label class="form-label" for="name">Product Name <span class="required">*</span></label>
+                  <input type="text" id="name" name="name" class="form-control"
+                    placeholder="e.g. KSSM Engineering Mathematics Vol 1" required>
+                  <div class="form-error" id="name-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="category">Category <span class="required">*</span></label>
+                  <select id="category" name="category" class="form-control" required>
+                    <option value="">Select category…</option>
+                    <option>Engineering Books</option>
+                    <option>Lab Coats</option>
+                    <option>Scientific Calculators</option>
+                    <option>Drawing Instruments</option>
+                    <option>Electronics</option>
+                    <option>Hostel Items</option>
+                    <option>Stationery</option>
+                    <option>Bags</option>
+                    <option>Cycles</option>
+                  </select>
+                  <div class="form-error" id="category-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="price">Price (₹) <span class="required">*</span></label>
+                  <div class="price-input-wrapper">
+                    <span class="price-prefix">₹</span>
+                    <input type="number" id="price" name="price" class="form-control"
+                      placeholder="0" min="0" step="1" required>
+                  </div>
+                  <div class="form-error" id="price-error"></div>
+                </div>
+
+                <div class="form-group span-2">
+                  <label class="form-label" for="description">Description <span class="required">*</span></label>
+                  <textarea id="description" name="description" class="form-control" rows="4"
+                    placeholder="Describe your product — edition, condition details, any scratches, accessories included…" required></textarea>
+                  <div class="form-error" id="description-error"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Condition -->
+            <div class="sell-form-section">
+              <div class="sell-form-section-title">🏷️ Condition</div>
+              <div class="condition-options">
+                <div class="condition-option">
+                  <input type="radio" name="condition" id="cond-new" value="New">
+                  <label for="cond-new">New</label>
+                </div>
+                <div class="condition-option">
+                  <input type="radio" name="condition" id="cond-like-new" value="Like New">
+                  <label for="cond-like-new">Like New</label>
+                </div>
+                <div class="condition-option">
+                  <input type="radio" name="condition" id="cond-good" value="Good" checked>
+                  <label for="cond-good">Good</label>
+                </div>
+                <div class="condition-option">
+                  <input type="radio" name="condition" id="cond-fair" value="Fair">
+                  <label for="cond-fair">Fair</label>
+                </div>
+                <div class="condition-option">
+                  <input type="radio" name="condition" id="cond-used" value="Used">
+                  <label for="cond-used">Used</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Seller Details -->
+            <div class="sell-form-section">
+              <div class="sell-form-section-title">📍 Seller Details</div>
+              <div class="sell-form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="department">Department <span class="required">*</span></label>
+                  <input type="text" id="department" name="department" class="form-control"
+                    placeholder="e.g. Computer Science" required>
+                  <div class="form-error" id="department-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="phone">Phone Number <span class="required">*</span></label>
+                  <input type="tel" id="phone" name="phone" class="form-control"
+                    placeholder="e.g. 9876543210"
+                    value="{{ current_user.phone if current_user and current_user.phone else '' }}">
+                  <div class="form-error" id="phone-error"></div>
+                </div>
+
+                <div class="form-group span-2">
+                  <label class="form-label" for="pickup_location">Pickup Location</label>
+                  <input type="text" id="pickup_location" name="pickup_location" class="form-control"
+                    placeholder="e.g. Boys Hostel Block C, Library Gate, Main Gate">
+                </div>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="sell-form-section">
+              <div class="sell-form-section-title">📸 Product Photos</div>
+              <div class="image-drop-zone" id="drop-zone">
+                <input type="file" id="images-input" name="images" multiple accept="image/*">
+                <div class="drop-icon">📷</div>
+                <div class="drop-text">Drag & drop images here</div>
+                <div class="drop-hint" id="upload-hint">
+                  or <span>click to browse</span> · Up to 5 images · JPG, PNG, WebP
+                </div>
+              </div>
+              <div class="image-previews" id="image-previews"></div>
+            </div>
+
+            <!-- Submit -->
+            <div class="sell-form-footer">
+              <div style="font-size:13px;color:var(--text-muted);">
+                ⚡ Your listing will be reviewed by admin before going live
+              </div>
+              <div style="display:flex;gap:12px;">
+                <a href="/my-listings" class="btn btn-outline">Cancel</a>
+                <button type="submit" id="submit-btn" class="btn btn-accent btn-lg">
+                  🚀 Submit for Review
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Tips Sidebar ───────────────────────────────── -->
+      <div class="sell-tips">
+        <div class="sell-tip-card">
+          <h4>💡 Selling Tips</h4>
+          <ul>
+            <li>Add clear photos from multiple angles</li>
+            <li>Write an honest, detailed description</li>
+            <li>Set a fair price (check similar listings)</li>
+            <li>Include edition/year for books</li>
+            <li>Mention all defects/marks clearly</li>
+            <li>Add your pickup location</li>
+          </ul>
+        </div>
+
+        <div class="card card-body" style="background:var(--bg-secondary);">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--primary);">📋 Approval Process</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">
+            Your listing will be reviewed by our admin team within 24 hours. Once approved, it becomes visible to all students.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/sell.js') }}"></script>
+{% endblock %}

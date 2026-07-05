@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Product Details – CampusMart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="product-detail-page">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="/categories">Categories</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current" id="breadcrumb-name">Product</span>
+    </nav>
+
+    <!-- Product data element for JS -->
+    <div id="product-data" data-product-id="{{ product_id }}"></div>
+
+    <!-- Product container (filled by JS) -->
+    <div id="product-container">
+      <div class="loading-center"><div class="spinner"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ REPORT MODAL ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="report-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🚩 Report this Listing</h3>
+      <button class="modal-close" onclick="closeModal('report-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Reason <span class="required">*</span></label>
+        <select class="form-control" id="report-reason">
+          <option value="">Select a reason…</option>
+          <option value="Fake Product">Fake Product</option>
+          <option value="Wrong Category">Wrong Category</option>
+          <option value="Spam">Spam</option>
+          <option value="Duplicate Listing">Duplicate Listing</option>
+          <option value="Inappropriate Content">Inappropriate Content</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Additional Details</label>
+        <textarea class="form-control" id="report-details" rows="3" placeholder="Describe the issue…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('report-modal')">Cancel</button>
+      <button class="btn btn-danger" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product.js') }}"></script>
+{% endblock %}

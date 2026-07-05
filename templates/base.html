@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}CampusMart – The trusted college marketplace for buying and selling used academic and hostel items.{% endblock %}">
+  <title>{% block title %}CampusMart – College Marketplace{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <!-- Logo -->
+    <a href="/" class="navbar-logo">
+      <div class="navbar-logo-icon">🎓</div>
+      <span class="navbar-logo-text">Campus<span>Mart</span></span>
+    </a>
+
+    <!-- Search Bar -->
+    <div class="navbar-search">
+      <input type="text" id="nav-search-input" placeholder="Search products…" autocomplete="off">
+      <button class="navbar-search-btn" id="nav-search-btn">🔍</button>
+    </div>
+
+    <!-- Desktop Nav Links -->
+    <nav class="navbar-links">
+      <a href="/" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">🏠 Home</a>
+      <a href="/categories" class="nav-link">📂 Categories</a>
+
+      {% if current_user %}
+        <a href="/sell" class="nav-link nav-link-sell">+ Sell</a>
+        <a href="/wishlist" class="nav-link">🤍</a>
+        <a href="/my-listings" class="nav-link">📦 My Listings</a>
+        <a href="/profile" class="nav-link">
+          {% if current_user.profile_photo %}
+            <img src="{{ current_user.profile_photo }}" class="nav-avatar" alt="Profile">
+          {% else %}
+            👤 {{ current_user.name.split()[0] }}
+          {% endif %}
+        </a>
+        <a href="/auth/logout" class="nav-link">Logout</a>
+      {% else %}
+        <a href="/sell" class="nav-link nav-link-sell">+ Sell</a>
+        <a href="/login" class="nav-link">👤 Login</a>
+      {% endif %}
+
+      {% if is_admin %}
+        <a href="/admin" class="nav-link" style="color:var(--accent);">⚙️ Admin</a>
+      {% endif %}
+    </nav>
+
+    <!-- Hamburger -->
+    <div class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/" class="nav-link">🏠 Home</a>
+  <a href="/categories" class="nav-link">📂 Categories</a>
+  <a href="/search" class="nav-link">🔍 Search</a>
+  {% if current_user %}
+    <a href="/sell" class="nav-link nav-link-sell" style="margin:4px 0;">+ Sell Product</a>
+    <a href="/wishlist" class="nav-link">🤍 Wishlist</a>
+    <a href="/my-listings" class="nav-link">📦 My Listings</a>
+    <a href="/profile" class="nav-link">👤 Profile</a>
+    <a href="/auth/logout" class="nav-link">🚪 Logout</a>
+  {% else %}
+    <a href="/login" class="nav-link">👤 Login / Sign Up</a>
+  {% endif %}
+  {% if is_admin %}
+    <a href="/admin" class="nav-link" style="color:var(--accent);">⚙️ Admin Dashboard</a>
+  {% endif %}
+</div>
+
+<!-- ═══ FLASH MESSAGES ════════════════════════════════════════════════════════ -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-messages" style="position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;">
+      {% for category, message in messages %}
+        <div class="toast toast-{{ 'error' if category == 'error' else 'success' if category == 'success' else 'info' }}"
+          id="flash-{{ loop.index }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+    <script>
+      document.querySelectorAll('[id^=flash-]').forEach(el => {
+        setTimeout(() => { el.classList.add('fade-out'); setTimeout(() => el.remove(), 400); }, 4000);
+      });
+    </script>
+  {% endif %}
+{% endwith %}
+
+<!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════════════ -->
+<main class="page-wrapper">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="navbar-logo" style="display:inline-flex;">
+          <div class="navbar-logo-icon">🎓</div>
+          <span class="navbar-logo-text">Campus<span>Mart</span></span>
+        </a>
+        <p>The trusted marketplace for college students to buy and sell used academic and hostel items. Save money, reduce waste, connect with peers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Marketplace</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/categories">All Categories</a></li>
+          <li><a href="/search">Browse Products</a></li>
+          <li><a href="/sell">Sell a Product</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <ul>
+          <li><a href="/profile">My Profile</a></li>
+          <li><a href="/my-listings">My Listings</a></li>
+          <li><a href="/wishlist">Wishlist</a></li>
+          <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/admin/login">Admin Portal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 CampusMart. All rights reserved.</span>
+      <span>Made with ❤️ for college students</span>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}My Listings – CampusMart{% endblock %}
+
+{% block extra_css %}
+<style>
+.listings-page { padding: 32px 0 60px; }
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 12px 24px; font-size: 14.5px; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: var(--transition); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-btn:hover { color: var(--primary); }
+.listing-card { display: flex; gap: 20px; background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; box-shadow: var(--shadow-sm); transition: var(--transition); margin-bottom: 16px; }
+.listing-card:hover { box-shadow: var(--shadow-md); }
+.listing-thumb { width: 100px; height: 100px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; background: var(--bg); }
+.listing-thumb-placeholder { width: 100px; height: 100px; border-radius: var(--radius-sm); flex-shrink: 0; background: linear-gradient(135deg, #e8f0fe, #c7d7f5); display: flex; align-items: center; justify-content: center; font-size: 36px; }
+.listing-info { flex: 1; min-width: 0; }
+.listing-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.listing-price { font-size: 20px; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+.listing-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+.listing-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; align-items: flex-start; flex-shrink: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="listings-page">
+  <div class="container-sm">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">📦 My Listings</h1>
+        <p class="section-subtitle">Manage all your product listings</p>
+      </div>
+      <a href="/sell" class="btn btn-accent">+ Add New</a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-active" onclick="switchTab('active')">
+        Active Listings <span id="active-count" class="badge badge-success" style="margin-left:6px;"></span>
+      </button>
+      <button class="tab-btn" id="tab-pending" onclick="switchTab('pending')">
+        Pending Review <span id="pending-count" class="badge badge-warning" style="margin-left:6px;"></span>
+      </button>
+      <button class="tab-btn" id="tab-sold" onclick="switchTab('sold')">
+        Sold <span id="sold-count" class="badge badge-danger" style="margin-left:6px;"></span>
+      </button>
+    </div>
+
+    <div id="listings-container">
+      <div class="loading-center"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let allListings = [];
+let currentTab = 'active';
+
+document.addEventListener('DOMContentLoaded', loadMyListings);
+
+async function loadMyListings() {
+  try {
+    allListings = await API.get('/api/my-listings');
+    updateCounts();
+    renderListings(currentTab);
+  } catch (e) {
+    document.getElementById('listings-container').innerHTML =
+      `<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Failed to load listings</h3></div>`;
+  }
+}
+
+function updateCounts() {
+  const counts = { active: 0, pending: 0, sold: 0, rejected: 0 };
+  allListings.forEach(p => {
+    if (p.status === 'approved') counts.active++;
+    else if (p.status === 'pending') counts.pending++;
+    else if (p.status === 'sold') counts.sold++;
+  });
+  const setCount = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n > 0 ? n : ''; };
+  setCount('active-count', counts.active);
+  setCount('pending-count', counts.pending);
+  setCount('sold-count', counts.sold);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${tab}`)?.classList.add('active');
+  renderListings(tab);
+}
+
+function renderListings(tab) {
+  const container = document.getElementById('listings-container');
+  const filtered = allListings.filter(p => {
+    if (tab === 'active') return p.status === 'approved';
+    if (tab === 'pending') return p.status === 'pending' || p.status === 'rejected';
+    if (tab === 'sold') return p.status === 'sold';
+    return true;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>No ${tab} listings</h3>
+        <p>You don't have any ${tab} products yet</p>
+        <a href="/sell" class="btn btn-accent">+ List a Product</a>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(p => {
+    const img = p.images?.[0]?.url;
+    const catIcon = window.CATEGORY_ICONS?.[p.category]?.icon || '📦';
+    const statusBadge = {
+      approved: '<span class="badge badge-success">✓ Active</span>',
+      pending: '<span class="badge badge-warning">⏳ Pending Review</span>',
+      rejected: '<span class="badge badge-danger">✕ Rejected</span>',
+      sold: '<span class="badge badge-muted">✓ Sold</span>',
+    }[p.status] || '';
+
+    return `
+      <div class="listing-card">
+        ${img
+          ? `<img src="${img}" class="listing-thumb" alt="${escHtml(p.name)}" onclick="window.location='/product/${p._id}'">`
+          : `<div class="listing-thumb-placeholder">${catIcon}</div>`
+        }
+        <div class="listing-info">
+          <div class="listing-name">${escHtml(p.name)}</div>
+          <div class="listing-price">${formatPrice(p.price)}</div>
+          <div class="listing-meta">
+            ${statusBadge}
+            <span class="badge badge-primary" style="margin-left:6px;">${escHtml(p.category)}</span>
+            <span style="margin-left:8px;">Posted ${timeAgo(p.created_at)}</span>
+          </div>
+          ${p.status === 'rejected' && p.rejection_reason ? `<div style="font-size:12.5px;color:var(--danger);margin-top:4px;">Rejection reason: ${escHtml(p.rejection_reason)}</div>` : ''}
+        </div>
+        <div class="listing-actions">
+          <a href="/product/${p._id}" target="_blank" class="btn btn-outline btn-sm">👁 View</a>
+          <a href="/sell/edit/${p._id}" class="btn btn-primary btn-sm">✏️ Edit</a>
+          ${p.status === 'approved' ? `<button class="btn btn-outline btn-sm" onclick="markSoldListing('${p._id}')">💰 Mark Sold</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="deleteListing('${p._id}')">🗑</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function deleteListing(id) {
+  if (!confirm('Delete this listing permanently?')) return;
+  const r = await API.del(`/api/products/${id}`);
+  if (r.ok) {
+    Toast.success('Listing deleted');
+    allListings = allListings.filter(p => p._id !== id);
+    updateCounts();
+    renderListings(currentTab);
+  } else {
+    Toast.error(r.data?.error || 'Failed to delete');
+  }
+}
+
+async function markSoldListing(id) {
+  if (!confirm('Mark this item as sold?')) return;
+  const r = await API.patch(`/api/products/${id}/sold`);
+  if (r.ok) {
+    Toast.success('Marked as sold!');
+    const p = allListings.find(x => x._id === id);
+    if (p) p.status = 'sold';
+    updateCounts();
+    renderListings(currentTab);
+  } else {
+    Toast.error('Failed to update');
+  }
+}
+
+window.switchTab = switchTab;
+window.deleteListing = deleteListing;
+window.markSoldListing = markSoldListing;
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}About CampusMart – College Marketplace{% endblock %}
+
+{% block content %}
+<div style="padding:56px 0;">
+  <div class="container-sm">
+    <div class="text-center" style="margin-bottom:48px;">
+      <div style="font-size:64px;margin-bottom:16px;">🎓</div>
+      <h1 style="font-size:36px;font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:12px;">About CampusMart</h1>
+      <p style="color:var(--text-muted);font-size:16px;max-width:540px;margin:0 auto;line-height:1.7;">
+        A student-built marketplace for student needs — because we know the struggle of buying new every semester.
+      </p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px;">
+      <div class="card card-body">
+        <div style="font-size:36px;margin-bottom:12px;">🎯</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Our Mission</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">To create a trusted, verified marketplace where college students can buy and sell used academic items, reducing waste and saving money for every student.</p>
+      </div>
+      <div class="card card-body">
+        <div style="font-size:36px;margin-bottom:12px;">🛡️</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Why Trust Us?</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">Every user is verified through their college Google account. Every listing is reviewed by our admin team before it goes live, ensuring quality and authenticity.</p>
+      </div>
+      <div class="card card-body">
+        <div style="font-size:36px;margin-bottom:12px;">💸</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Zero Platform Fees</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">CampusMart is completely free to use. No commissions, no listing fees, no hidden charges. What you see is what you pay.</p>
+      </div>
+      <div class="card card-body">
+        <div style="font-size:36px;margin-bottom:12px;">🌱</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Sustainability</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">By giving used items a second life, we help reduce unnecessary waste on campus and encourage a culture of sharing and sustainability.</p>
+      </div>
+    </div>
+
+    <div class="card" style="overflow:hidden;">
+      <div style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:32px;color:#fff;text-align:center;">
+        <h2 style="font-size:26px;font-weight:800;margin-bottom:8px;">Ready to get started?</h2>
+        <p style="opacity:0.8;margin-bottom:24px;">Join hundreds of students buying and selling on CampusMart.</p>
+        <a href="/login" class="btn btn-accent btn-lg">Sign in with Google</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
