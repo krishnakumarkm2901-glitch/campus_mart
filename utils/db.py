@@ -7,12 +7,15 @@ from flask import current_app, g
 from pymongo import MongoClient, errors
 
 
-def _get_database_name():
-    configured_name = current_app.config.get("MONGO_DB_NAME")
+def _get_database_name(config=None):
+    if config is None:
+        config = current_app.config
+
+    configured_name = config.get("MONGO_DB_NAME")
     if configured_name:
         return configured_name
 
-    uri = current_app.config.get("MONGO_URI", "")
+    uri = config.get("MONGO_URI", "")
     parsed_uri = urlparse(uri)
     db_name = parsed_uri.path.lstrip("/")
     return db_name or "campusmart"
@@ -29,7 +32,7 @@ def get_db():
             client = _create_mongo_client(current_app.config["MONGO_URI"])
             client.admin.command("ping")
             g.mongo_client = client
-            g.db = client[_get_database_name()]
+            g.db = client[_get_database_name(current_app.config)]
         except errors.PyMongoError as exc:
             raise RuntimeError(
                 f"Unable to connect to MongoDB Atlas: {exc}"
@@ -50,7 +53,7 @@ def log_db_startup(app):
     try:
         client = _create_mongo_client(app.config["MONGO_URI"])
         client.admin.command("ping")
-        db_name = _get_database_name()
+        db_name = _get_database_name(app.config)
         message = f"Connected to MongoDB Atlas database: {db_name}"
         print(message)
         app.logger.info(message)
@@ -70,7 +73,7 @@ def init_db_indexes(app):
     try:
         client = _create_mongo_client(app.config["MONGO_URI"])
         client.admin.command("ping")
-        db = client[_get_database_name()]
+        db = client[_get_database_name(app.config)]
 
         # Products indexes
         db.products.create_index([("name", "text"), ("description", "text")])

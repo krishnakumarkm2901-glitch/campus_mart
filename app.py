@@ -29,9 +29,6 @@ def create_app():
     # Teardown
     app.teardown_appcontext(close_db)
 
-    # Verify MongoDB connection at startup.
-    log_db_startup(app)
-
     # Register blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(products_bp)
@@ -134,5 +131,7 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    init_db_indexes(app)
+    with app.app_context():
+        init_db_indexes(app)
+        log_db_startup(app)
     app.run(debug=app.config["DEBUG"], host="0.0.0.0", port=5000)
