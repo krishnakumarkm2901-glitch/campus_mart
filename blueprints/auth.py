@@ -44,6 +44,32 @@ def _is_local_host(hostname):
     return hostname in {"localhost", "127.0.0.1", "::1"}
 
 
+def _get_request_origin() -> str:
+    forwarded_proto = request.headers.get("X-Forwarded-Proto")
+    forwarded_host = request.headers.get("X-Forwarded-Host") or request.headers.get("Host")
+
+    if forwarded_proto and forwarded_host:
+        return f"{forwarded_proto}://{forwarded_host}".rstrip("/")
+
+    return request.host_url.rstrip("/")
+
+
+def get_effective_redirect_uri() -> str:
+    """Return the redirect URI that should be used for the current request."""
+    configured = current_app.config["GOOGLE_REDIRECT_URI"]
+    callback = urlsplit(configured)
+    callback_origin = f"{callback.scheme}://{callback.netloc}".rstrip("/")
+    request_origin = _get_request_origin()
+
+    if callback_origin.lower() != request_origin.lower():
+        callback_host = callback.hostname
+        request_host = urlsplit(request_origin).hostname
+        if _is_local_host(callback_host) and not _is_local_host(request_host):
+            return f"{request_origin}{url_for('auth.google_callback')}"
+
+    return configured
+
+
 def get_google_flow(state=None, code_verifier=None, redirect_uri=None):
     """Build the OAuth flow with current app config."""
     config = deepcopy(GOOGLE_CLIENT_CONFIG)
@@ -51,7 +77,7 @@ def get_google_flow(state=None, code_verifier=None, redirect_uri=None):
     config["web"]["client_secret"] = current_app.config["GOOGLE_CLIENT_SECRET"]
 
     if redirect_uri is None:
-        redirect_uri = current_app.config["GOOGLE_REDIRECT_URI"]
+        redirect_uri = get_effective_redirect_uri()
 
     config["web"]["redirect_uris"] = [redirect_uri]
     config["web"]["javascript_origins"] = [urlsplit(redirect_uri).scheme + "://" + urlsplit(redirect_uri).netloc]
@@ -89,27 +115,37 @@ def google_login():
     if not (
         current_app.config["GOOGLE_CLIENT_ID"]
         and current_app.config["GOOGLE_CLIENT_SECRET"]
+        and current_app.config["GOOGLE_REDIRECT_URI"]
     ):
         flash(
-            "Google login is not configured yet. Add GOOGLE_CLIENT_ID and "
-            "GOOGLE_CLIENT_SECRET to the project's .env file, then restart the app.",
+            "Google login is not configured yet. Add GOOGLE_CLIENT_ID, "
+            "GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI to the project's .env file, then restart the app.",
             "error",
         )
         return redirect(url_for("auth.login_page"))
 
-    # OAuth cookies are scoped to a hostname. If the app is running on a
-    # localhost alias, allow either localhost or 127.0.0.1 and preserve the
-    # configured redirect URI for actual callback verification.
+    # OAuth cookies are scoped to a hostname. When the app is accessed from a
+    # deployed domain, always use the current host for the callback if the
+    # configured redirect URI does not match the request origin.
     callback = urlsplit(current_app.config["GOOGLE_REDIRECT_URI"])
     callback_origin = f"{callback.scheme}://{callback.netloc}".rstrip("/")
-    request_origin = request.host_url.rstrip("/")
-    if callback_origin.lower() != request_origin.lower():
-        callback_host = callback.hostname
-        request_host = urlsplit(request.host_url).hostname
-        if not (_is_local_host(callback_host) and _is_local_host(request_host)):
-            return redirect(f"{callback_origin}{url_for('auth.google_login')}")
+    request_origin = _get_request_origin()
+    redirect_uri = current_app.config["GOOGLE_REDIRECT_URI"]
 
-    flow = get_google_flow(redirect_uri=current_app.config["GOOGLE_REDIRECT_URI"])
+    if callback_origin.lower() != request_origin.lower():
+        request_host = urlsplit(request_origin).hostname
+        if not _is_local_host(request_host):
+            redirect_uri = f"{request_origin}{url_for('auth.google_callback')}"
+        else:
+            flash(
+                "Google login is currently set up with a different callback URL. "
+                "Update GOOGLE_REDIRECT_URI to your deployed app URL and add that URL to "
+                "Google Cloud OAuth Authorized redirect URIs.",
+                "error",
+            )
+            return redirect(url_for("auth.login_page"))
+
+    flow = get_google_flow(redirect_uri=redirect_uri)
     authorization_url, state = flow.authorization_url(
         access_type="offline",
         include_granted_scopes="true",

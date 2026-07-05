@@ -4,6 +4,7 @@ CampusMart – Flask Application Entry Point
 from flask import Flask, render_template, session, redirect, url_for
 from flask_cors import CORS
 from flask_session import Session
+from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 from utils.db import close_db, init_db_indexes
 from blueprints.auth import auth_bp
@@ -17,6 +18,9 @@ from blueprints.contact import contact_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # Fix proxy headers from Render so request.host_url matches the deployed URL.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     # Extensions
     CORS(app)
