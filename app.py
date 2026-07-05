@@ -6,7 +6,7 @@ from flask_cors import CORS
 from flask_session import Session
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from utils.db import close_db, init_db_indexes
+from utils.db import close_db, init_db_indexes, log_db_startup
 from blueprints.auth import auth_bp
 from blueprints.products import products_bp
 from blueprints.admin import admin_bp
@@ -28,6 +28,9 @@ def create_app():
 
     # Teardown
     app.teardown_appcontext(close_db)
+
+    # Verify MongoDB connection at startup.
+    log_db_startup(app)
 
     # Register blueprints
     app.register_blueprint(auth_bp)
