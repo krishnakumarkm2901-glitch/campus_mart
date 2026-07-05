@@ -153,7 +153,10 @@ def google_login():
     # Keep a small set of attempts so a double-click or a second login tab
     # does not invalidate the first callback.
     attempts = session.get("oauth_attempts", {})
-    attempts[state] = flow.code_verifier
+    attempts[state] = {
+        "code_verifier": flow.code_verifier,
+        "redirect_uri": redirect_uri,
+    }
     while len(attempts) > 5:
         attempts.pop(next(iter(attempts)))
     session["oauth_attempts"] = attempts
@@ -177,13 +180,19 @@ def google_callback():
     try:
         received_state = request.args.get("state", "")
         attempts = session.get("oauth_attempts", {})
-        code_verifier = attempts.get(received_state)
-        if not received_state or not code_verifier:
+        state_data = attempts.get(received_state)
+        if not received_state or not state_data:
             raise ValueError("Invalid or expired OAuth state. Please try signing in again.")
+
+        code_verifier = state_data.get("code_verifier")
+        redirect_uri = state_data.get("redirect_uri")
+        if not code_verifier or not redirect_uri:
+            raise ValueError("Invalid OAuth state data. Please try signing in again.")
 
         flow = get_google_flow(
             state=received_state,
             code_verifier=code_verifier,
+            redirect_uri=redirect_uri,
         )
         flow.fetch_token(authorization_response=request.url)
 
