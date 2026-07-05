@@ -276,6 +276,13 @@ def admin_login_page():
     return render_template("admin/login.html")
 
 
+# Backwards-compatible alias: allow visiting `/loginadmin` to reach admin login.
+@auth_bp.route("/loginadmin", methods=["GET"])
+def loginadmin_page():
+    """Alias route for admin login page at /loginadmin."""
+    return admin_login_page()
+
+
 @auth_bp.route("/admin/login", methods=["POST"])
 def admin_login():
     """Handle admin login."""
