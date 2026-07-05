@@ -18,7 +18,10 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
 
     # MongoDB
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/campusmart")
+    MONGO_URI = os.getenv("MONGO_URI")
+    if not MONGO_URI:
+        raise RuntimeError("MONGO_URI environment variable is missing.")
+    MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "campusmart")
 
     # Google OAuth
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")

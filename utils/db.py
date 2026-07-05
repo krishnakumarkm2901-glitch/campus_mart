@@ -9,8 +9,11 @@ def get_db():
     """Return the database instance, creating it if needed."""
     if "db" not in g:
         client = MongoClient(current_app.config["MONGO_URI"])
-        g.db = client.get_default_database()
         g.mongo_client = client
+        db = client.get_default_database()
+        if db is None:
+            db = client[current_app.config.get("MONGO_DB_NAME", "campusmart")]
+        g.db = db
     return g.db
 
 
@@ -26,6 +29,8 @@ def init_db_indexes(app):
     with app.app_context():
         client = MongoClient(app.config["MONGO_URI"])
         db = client.get_default_database()
+        if db is None:
+            db = client[app.config.get("MONGO_DB_NAME", "campusmart")]
 
         # Products indexes
         db.products.create_index([("name", "text"), ("description", "text")])
