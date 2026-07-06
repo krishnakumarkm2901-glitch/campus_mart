@@ -2,35 +2,26 @@
 {% block title %}Contact – CampusMart{% endblock %}
 
 {% block content %}
-<div style="padding:56px 0;">
-  <div class="container-sm" style="max-width:600px;">
-    <div class="text-center" style="margin-bottom:36px;">
-      <h1 style="font-size:32px;font-weight:900;color:var(--text);letter-spacing:-0.5px;margin-bottom:8px;">📬 Contact Us</h1>
-      <p style="color:var(--text-muted);font-size:15px;">Have a question or need help? We're here for you.</p>
+<div class="contact-page">
+  <div class="container-sm">
+    <div class="page-heading">
+      <h1>📬 Contact Us</h1>
+      <p>Have a question or need help? We're here for you.</p>
     </div>
 
-    <div class="card card-body" style="margin-bottom:24px;">
-      <div style="display:flex;flex-direction:column;gap:20px;">
-        <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg);border-radius:var(--radius);">
-          <span style="font-size:32px;">📧</span>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Email Support</div>
-            <div style="color:var(--text-muted);font-size:14px;">{{ support_email }}</div>
-          </div>
+    <div class="card card-body contact-info-grid">
+      <div class="contact-info-card">
+        <span>📧</span>
+        <div>
+          <div class="info-title">Email Support</div>
+          <div class="info-text">krishnakumarkm2901@gmail.com</div>
         </div>
-        <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg);border-radius:var(--radius);">
-          <span style="font-size:32px;">📞</span>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Phone (Mon-Fri, 9am–5pm)</div>
-            <div style="color:var(--text-muted);font-size:14px;">+91 98765 43210</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg);border-radius:var(--radius);">
-          <span style="font-size:32px;">📍</span>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Office</div>
-            <div style="color:var(--text-muted);font-size:14px;">Student Activity Center, Main Campus</div>
-          </div>
+      </div>
+      <div class="contact-info-card">
+        <span>📞</span>
+        <div>
+          <div class="info-title">Phone (Mon-Fri, 9am–5pm)</div>
+          <div class="info-text">+91 8807436007</div>
         </div>
       </div>
     </div>
