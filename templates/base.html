@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="{% block meta_description %}CampusMart – The trusted college marketplace for buying and selling used academic and hostel items.{% endblock %}">
   <title>{% block title %}CampusMart – College Marketplace{% endblock %}</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
   <div class="navbar-inner">
     <!-- Logo -->
     <a href="/" class="navbar-logo">
-      <div class="navbar-logo-icon">🎓</div>
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="navbar-logo-icon" alt="CampusMart logo">
       <span class="navbar-logo-text">Campus<span>Mart</span></span>
     </a>
 
@@ -106,7 +106,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="/" class="navbar-logo" style="display:inline-flex;">
-          <div class="navbar-logo-icon">🎓</div>
+          <img src="{{ url_for('static', filename='img/logo.png') }}" class="navbar-logo-icon" alt="CampusMart logo">
           <span class="navbar-logo-text">Campus<span>Mart</span></span>
         </a>
         <p>The trusted marketplace for college students to buy and sell used academic and hostel items. Save money, reduce waste, connect with peers.</p>

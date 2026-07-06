@@ -63,9 +63,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  overflow: hidden;
   margin: 0 auto 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+.auth-logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .auth-logo h1 {
@@ -83,6 +89,21 @@
 .auth-logo p {
   font-size: 13.5px;
   color: var(--text-muted);
+}
+
+.auth-heading {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 28px;
 }
 
 .auth-divider {
