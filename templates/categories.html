@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}All Categories – CampusMart{% endblock %}
+{% block title %}All Categories – NIT-Campus mart{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/categories.css') }}">
 {% endblock %}
 
 {% block content %}
-<div style="padding:40px 0 60px;">
+<div class="categories-page" style="padding:40px 0 60px;">
   <div class="container">
     <div class="text-center" style="margin-bottom:40px;">
       <h1 class="section-title">Browse All Categories</h1>
       <p class="section-subtitle">Find exactly what you need for college life</p>
     </div>
 
-    <div class="category-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+    <div class="category-grid">
       {% set categories = [
         ('Engineering Books', '📚', 'cat-books', 'Textbooks, reference books, lab manuals for all semesters'),
         ('Lab Coats', '🥼', 'cat-lab', 'White lab coats in various sizes for practical sessions'),
@@ -27,11 +27,11 @@
       ] %}
 
       {% for name, icon, cls, desc in categories %}
-        <a href="/search?category={{ name | urlencode }}" class="category-card" style="padding:32px 20px;gap:16px;">
-          <div class="category-icon {{ cls }}" style="width:72px;height:72px;font-size:34px;">{{ icon }}</div>
-          <div style="text-align:center;">
-            <div class="category-name" style="font-size:15px;margin-bottom:6px;">{{ name }}</div>
-            <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">{{ desc }}</div>
+        <a href="/search?category={{ name | urlencode }}" class="category-card">
+          <div class="category-icon {{ cls }}">{{ icon }}</div>
+          <div class="category-card-content">
+            <div class="category-name">{{ name }}</div>
+            <div class="category-desc">{{ desc }}</div>
           </div>
           <span class="badge badge-muted" data-cat-count="{{ name }}">Loading…</span>
         </a>

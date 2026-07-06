@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{% block title %}Admin{% endblock %} – CampusMart</title>
+<title>{% block title %}Admin{% endblock %} – NIT-Campus mart</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-</head><body class="admin-body"><div class="admin-layout"><aside class="admin-sidebar"><div class="sidebar-header"><p>CampusMart Admin</p></div><nav class="sidebar-nav">
+</head><body class="admin-body"><div class="admin-layout"><aside class="admin-sidebar"><div class="sidebar-header"><p>NIT-Campus mart Admin</p></div><nav class="sidebar-nav">
 <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a><a class="sidebar-link" href="{{ url_for('admin.products_page') }}">Products</a><a class="sidebar-link" href="{{ url_for('admin.students_page') }}">Students</a><a class="sidebar-link" href="{{ url_for('admin.daily_report_page') }}">Daily report</a><a class="sidebar-link" href="{{ url_for('auth.admin_logout') }}">Log out</a>
 </nav></aside><main class="admin-main">{% block content %}{% endblock %}</main></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="{{ url_for('static', filename='js/main.js') }}"></script><script src="{{ url_for('static', filename='js/admin.js') }}"></script></body></html>

@@ -1,21 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Search Results – CampusMart{% endblock %}
+{% block title %}Search Results – NIT-Campus mart{% endblock %}
 
 {% block extra_css %}
 <style>
 .search-page { padding: 32px 0 60px; }
-.search-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+.search-banner {
+  background: var(--primary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-banner input {
+  flex: 1;
+  min-width: 220px;
+  background: rgba(255,255,255,0.15);
+  border-color: transparent;
+  color: #fff;
+}
+.search-banner input::placeholder { color: rgba(255,255,255,0.75); }
+.search-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; }
 .filter-sidebar { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: sticky; top: calc(var(--navbar-height) + 16px); overflow: hidden; }
 .filter-header { padding: 16px 20px; background: var(--primary); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
 .filter-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
 .filter-section:last-child { border-bottom: none; }
 .filter-section-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 12px; }
 .sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.sort-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sort-bar select,
+.search-banner input,
+.price-range input { font: inherit; }
 .sort-bar select { padding: 8px 36px 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13.5px; font-family: inherit; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; color: var(--text); background-color: #fff; }
-.price-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.price-range { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .price-range input { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; width: 100%; outline: none; }
 .price-range input:focus { border-color: var(--primary); }
-@media (max-width: 900px) { .search-layout { grid-template-columns: 1fr; } .filter-sidebar { position: static; display: none; } .filter-sidebar.open { display: block; } }
+@media (max-width: 900px) {
+  .search-layout { grid-template-columns: 1fr; }
+  .filter-sidebar { position: static; display: none; }
+  .filter-sidebar.open { display: block; }
+  .search-banner { padding: 16px; }
+}
+@media (max-width: 600px) {
+  .search-banner { flex-direction: column; align-items: stretch; }
+  .sort-bar { flex-direction: column; align-items: stretch; }
+  .sort-actions { width: 100%; justify-content: space-between; }
+}
 </style>
 {% endblock %}
 
@@ -23,9 +55,8 @@
 <div class="search-page">
   <div class="container">
     <!-- Search Bar -->
-    <div style="background:var(--primary);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;gap:12px;align-items:center;">
+    <div class="search-banner">
       <input type="text" id="search-input" class="form-control"
-        style="flex:1;background:rgba(255,255,255,0.15);border-color:transparent;color:#fff;"
         placeholder="Search products…" oninput="onSearchInput()">
       <button class="btn btn-accent" onclick="applyFilters()">🔍 Search</button>
     </div>
@@ -78,7 +109,7 @@
       <div>
         <div class="sort-bar">
           <h1 id="search-page-title" style="font-size:20px;font-weight:800;color:var(--text);">All Products</h1>
-          <div style="display:flex;align-items:center;gap:12px;">
+          <div class="sort-actions">
             <button class="btn btn-outline btn-sm" style="display:none;" id="mobile-filter-btn"
               onclick="toggleFilters()">⚙ Filters</button>
             <span style="font-size:13px;color:var(--text-muted);" id="result-count"></span>
