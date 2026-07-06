@@ -2,6 +2,7 @@
 Authentication Blueprint
 Handles Google OAuth for students and username/password for admin.
 """
+import ipaddress
 import json
 import os
 from copy import deepcopy
@@ -41,7 +42,13 @@ GOOGLE_CLIENT_CONFIG = {
 def _is_local_host(hostname):
     if not hostname:
         return False
-    return hostname in {"localhost", "127.0.0.1", "::1"}
+    if hostname in {"localhost", "127.0.0.1", "::1"}:
+        return True
+    try:
+        ip = ipaddress.ip_address(hostname)
+        return ip.is_loopback
+    except ValueError:
+        return False
 
 
 def _get_request_origin() -> str:
@@ -64,7 +71,9 @@ def get_effective_redirect_uri() -> str:
     if callback_origin.lower() != request_origin.lower():
         callback_host = callback.hostname
         request_host = urlsplit(request_origin).hostname
-        if _is_local_host(callback_host) and not _is_local_host(request_host):
+        if _is_local_host(callback_host):
+            return configured
+        if _is_local_host(request_host):
             return f"{request_origin}{url_for('auth.google_callback')}"
 
     return configured
@@ -124,18 +133,19 @@ def google_login():
         )
         return redirect(url_for("auth.login_page"))
 
-    # OAuth cookies are scoped to a hostname. When the app is accessed from a
-    # deployed domain, always use the current host for the callback if the
-    # configured redirect URI does not match the request origin.
+    # OAuth cookies are scoped to a hostname. Use an effective redirect URI
+    # depending on the configured callback and current request origin.
     callback = urlsplit(current_app.config["GOOGLE_REDIRECT_URI"])
     callback_origin = f"{callback.scheme}://{callback.netloc}".rstrip("/")
     request_origin = _get_request_origin()
-    redirect_uri = current_app.config["GOOGLE_REDIRECT_URI"]
+    request_host = urlsplit(request_origin).hostname
+    redirect_uri = get_effective_redirect_uri()
 
     if callback_origin.lower() != request_origin.lower():
-        request_host = urlsplit(request_origin).hostname
-        if not _is_local_host(request_host):
-            redirect_uri = f"{request_origin}{url_for('auth.google_callback')}"
+        if _is_local_host(callback.hostname) and redirect_uri == current_app.config["GOOGLE_REDIRECT_URI"]:
+            pass
+        elif _is_local_host(request_host) and redirect_uri != current_app.config["GOOGLE_REDIRECT_URI"]:
+            pass
         else:
             flash(
                 "Google login is currently set up with a different callback URL. "

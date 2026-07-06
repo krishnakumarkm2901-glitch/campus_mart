@@ -51,9 +51,6 @@
         <a href="/login" class="nav-link">👤 Login</a>
       {% endif %}
 
-      {% if is_admin %}
-        <a href="/admin" class="nav-link" style="color:var(--accent);">⚙️ Admin</a>
-      {% endif %}
     </nav>
 
     <!-- Hamburger -->
@@ -76,9 +73,6 @@
     <a href="/auth/logout" class="nav-link">🚪 Logout</a>
   {% else %}
     <a href="/login" class="nav-link">👤 Login / Sign Up</a>
-  {% endif %}
-  {% if is_admin %}
-    <a href="/admin" class="nav-link" style="color:var(--accent);">⚙️ Admin Dashboard</a>
   {% endif %}
 </div>
 
@@ -140,7 +134,6 @@
         <ul>
           <li><a href="/about">About Us</a></li>
           <li><a href="/contact">Contact</a></li>
-          <li><a href="/admin/login">Admin Portal</a></li>
         </ul>
       </div>
     </div>
