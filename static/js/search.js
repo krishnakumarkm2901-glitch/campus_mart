@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update search page title
   if (params.q) {
     document.getElementById('search-page-title').textContent = `Results for "${params.q}"`;
-    document.title = `"${params.q}" – CampusMart`;
+    document.title = `"${params.q}" – NIT-Campus mart`;
   }
 
   // Populate categories

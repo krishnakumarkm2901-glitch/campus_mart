@@ -65,7 +65,7 @@ function renderProduct(p) {
 
   const cat = CATEGORY_ICONS[p.category] || { icon: '📦', cls: 'cat-misc' };
 
-  document.title = `${p.name} – CampusMart`;
+  document.title = `${p.name} – NIT-Campus mart`;
   document.getElementById('breadcrumb-name').textContent = p.name;
 
   // Status badge
