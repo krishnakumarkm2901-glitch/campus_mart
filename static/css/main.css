@@ -477,12 +477,14 @@ input, textarea, select, button {
 /* ── Product Cards ───────────────────────────────────────────────────────────── */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   align-items: stretch;
 }
 
 .product-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   background: var(--bg-card);
   border-radius: var(--radius);
   overflow: hidden;
@@ -501,7 +503,7 @@ input, textarea, select, button {
 
 .product-card-image {
   width: 100%;
-  height: 180px;
+  height: 220px;
   object-fit: cover;
   background: linear-gradient(135deg, #f7f0d8 0%, #ead58e 100%);
   transition: transform 0.4s ease;
@@ -513,7 +515,7 @@ input, textarea, select, button {
 
 .product-card-image-placeholder {
   width: 100%;
-  height: 180px;
+  height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,7 +526,17 @@ input, textarea, select, button {
 }
 
 .product-card-body {
+  display: flex;
+  flex-direction: column;
   padding: 14px;
+}
+
+.product-card-body > .product-card-meta {
+  margin-top: auto;
+}
+
+.product-card-footer {
+  margin-top: auto;
 }
 
 .product-card-price {
@@ -535,8 +547,8 @@ input, textarea, select, button {
 }
 
 .product-card-name {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: 8px;
   display: -webkit-box;
@@ -607,6 +619,10 @@ input, textarea, select, button {
   justify-content: space-between;
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.product-card-body > .product-card-meta {
+  margin-top: auto;
 }
 
 .wishlist-btn {
@@ -857,7 +873,7 @@ textarea.form-control {
 }
 .contact-info-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
@@ -1174,12 +1190,16 @@ textarea.form-control {
   .footer-grid { grid-template-columns: 1fr; gap: 24px; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
 
-  .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .product-card-image { height: 140px; }
   .product-card-image-placeholder { height: 140px; }
 
   .section-title { font-size: 20px; }
   .container { padding: 0 14px; }
+}
+
+@media (max-width: 480px) {
+  .product-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

@@ -16,11 +16,6 @@ CATEGORIES = [
     "Lab Coats",
     "Scientific Calculators",
     "Drawing Instruments",
-    "Electronics",
-    "Hostel Items",
-    "Stationery",
-    "Bags",
-    "Cycles",
 ]
 
 CONDITIONS = ["New", "Like New", "Good", "Fair", "Used"]

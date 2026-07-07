@@ -164,11 +164,6 @@ const CATEGORY_ICONS = {
   'Lab Coats': { icon: '🥼', cls: 'cat-lab' },
   'Scientific Calculators': { icon: '🧮', cls: 'cat-calc' },
   'Drawing Instruments': { icon: '📐', cls: 'cat-drawing' },
-  'Electronics': { icon: '💻', cls: 'cat-electronics' },
-  'Hostel Items': { icon: '🛏', cls: 'cat-hostel' },
-  'Stationery': { icon: '✏️', cls: 'cat-stationery' },
-  'Bags': { icon: '🎒', cls: 'cat-bags' },
-  'Cycles': { icon: '🚲', cls: 'cat-cycles' },
 };
 
 // ── Product Card HTML ───────────────────────────────────────

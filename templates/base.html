@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% block meta_description %}NIT-Campus mart – The trusted college marketplace for buying and selling used academic and hostel items.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}NIT-Campus mart – The trusted college marketplace for buying and selling used academic books, lab coats, calculators, and drawing instruments.{% endblock %}">>
   <title>{% block title %}NIT-Campus mart – College Marketplace{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='img/images.jpg') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,13 +31,13 @@
 
     <!-- Desktop Nav Links -->
     <nav class="navbar-links">
-      <a href="/" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">🏠 Home</a>
-      <a href="/categories" class="nav-link">📂 Categories</a>
+      <a href="/" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}"> Home</a>
+      <a href="/categories" class="nav-link"> Categories</a>
 
       {% if current_user %}
         <a href="/sell" class="nav-link nav-link-sell">+ Sell</a>
-        <a href="/wishlist" class="nav-link">🤍</a>
-        <a href="/my-listings" class="nav-link">📦 My Listings</a>
+        <a href="/wishlist" class="nav-link">Watch_List</a>
+        <a href="/my-listings" class="nav-link">My Listings</a>
         <a href="/profile" class="nav-link">
           {% if current_user.profile_photo %}
             <img src="{{ current_user.profile_photo }}" class="nav-avatar" alt="Profile">
@@ -139,7 +139,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2025 NIT-Campus mart. All rights reserved.</span>
-      <span>Made with ❤️ for college students</span>
+      <span>Made for college students</span>
     </div>
   </div>
 </footer>
