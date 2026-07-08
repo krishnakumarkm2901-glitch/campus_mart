@@ -252,7 +252,8 @@ def google_callback():
         new_user["_id"] = result.inserted_id
         user = new_user
 
-    # Store in session
+    # Store in session as a persistent login.
+    session.permanent = True
     session["user"] = {
         "id": str(user["_id"]),
         "google_id": google_id,
@@ -304,6 +305,7 @@ def admin_login():
         username == current_app.config["ADMIN_USERNAME"]
         and password == current_app.config["ADMIN_PASSWORD"]
     ):
+        session.permanent = True
         session["is_admin"] = True
         session["admin_name"] = username
         return jsonify({"success": True, "redirect": url_for("admin.dashboard")})

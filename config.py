@@ -3,6 +3,7 @@ CampusMart Configuration
 Loads environment variables and exposes them as a Config object.
 """
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,9 +14,11 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "campusmart-dev-secret-change-in-prod")
     SESSION_TYPE = "filesystem"
     SESSION_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "flask_session")
-    SESSION_PERMANENT = False
+    SESSION_PERMANENT = True
+    PERMANENT_SESSION_LIFETIME = timedelta(days=30)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_REFRESH_EACH_REQUEST = True
 
     # MongoDB
     MONGO_URI = os.getenv("MONGO_URI")
