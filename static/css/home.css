@@ -6,6 +6,7 @@
 .hero {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
   padding: 64px 0 72px;
+  min-height: calc(100vh - var(--navbar-height));
   position: relative;
   overflow: hidden;
 }
