@@ -101,7 +101,7 @@
 /* ── Main Content ─────────────────────────────────────── */
 .admin-main {
   flex: 1;
-  padding: 28px;
+  padding: 0 28px;
   overflow-x: hidden;
 }
 
