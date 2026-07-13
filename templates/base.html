@@ -62,17 +62,17 @@
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobile-menu">
-  <a href="/" class="nav-link">🏠 Home</a>
-  <a href="/categories" class="nav-link">📂 Categories</a>
+  <a href="/" class="nav-link"> <i class="fa-solid fa-house"></i>Home</a>
+  <a href="/categories" class="nav-link"> Categories</a>
   <a href="/search" class="nav-link">🔍 Search</a>
   {% if current_user %}
     <a href="/sell" class="nav-link nav-link-sell" style="margin:4px 0;">+ Sell Product</a>
-    <a href="/wishlist" class="nav-link">🤍 Wishlist</a>
-    <a href="/my-listings" class="nav-link">📦 My Listings</a>
-    <a href="/profile" class="nav-link">👤 Profile</a>
-    <a href="/auth/logout" class="nav-link">🚪 Logout</a>
+    <a href="/wishlist" class="nav-link"> Wishlist</a>
+    <a href="/my-listings" class="nav-link"> My Listings</a>
+    <a href="/profile" class="nav-link"> Profile</a>
+    <a href="/auth/logout" class="nav-link"> Logout</a>
   {% else %}
-    <a href="/login" class="nav-link">👤 Login / Sign Up</a>
+    <a href="/login" class="nav-link"> Login / Sign Up</a>
   {% endif %}
 </div>
 
