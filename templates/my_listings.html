@@ -17,6 +17,60 @@
 .listing-price { font-size: 20px; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
 .listing-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
 .listing-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; align-items: flex-start; flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .listings-page { padding-top: 24px; }
+  .tabs { margin-bottom: 18px; }
+  .tab-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 4px;
+    font-size: 12.5px;
+    line-height: 1.25;
+    text-align: center;
+  }
+  .tab-btn .badge {
+    display: inline-flex;
+    margin-left: 3px !important;
+  }
+  .listing-card {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px;
+  }
+  .listing-thumb,
+  .listing-thumb-placeholder {
+    width: 88px;
+    height: 88px;
+  }
+  .listing-name,
+  .listing-meta {
+    overflow-wrap: anywhere;
+  }
+  .listing-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+  .listing-meta > * { margin-left: 0 !important; }
+  .listing-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+  }
+  .listing-actions .btn {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    white-space: nowrap;
+  }
+}
 </style>
 {% endblock %}
 
@@ -139,7 +193,7 @@ function renderListings(tab) {
           <a href="/product/${p._id}" target="_blank" class="btn btn-outline btn-sm">👁 View</a>
           <a href="/sell/edit/${p._id}" class="btn btn-primary btn-sm">✏️ Edit</a>
           ${p.status === 'approved' ? `<button class="btn btn-outline btn-sm" onclick="markSoldListing('${p._id}')">💰 Mark Sold</button>` : ''}
-          <button class="btn btn-danger btn-sm" onclick="deleteListing('${p._id}')">🗑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteListing('${p._id}')">🗑 Delete</button>
         </div>
       </div>`;
   }).join('');

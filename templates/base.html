@@ -145,6 +145,13 @@
 </footer>
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  // A page restored from the back/forward cache may still show the old
+  // logged-in navbar after logout. Reload it so Flask checks the session.
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) window.location.reload();
+  });
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

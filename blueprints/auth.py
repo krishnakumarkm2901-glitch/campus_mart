@@ -272,7 +272,11 @@ def google_callback():
 def logout():
     """Clear session and redirect to login."""
     session.clear()
-    return redirect(url_for("auth.login_page"))
+    response = redirect(url_for("auth.login_page"))
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 # ──────────────────────────────────────────────────────────────────────────────

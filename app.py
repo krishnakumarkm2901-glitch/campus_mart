@@ -26,6 +26,15 @@ def create_app():
     CORS(app)
     Session(app)
 
+    @app.after_request
+    def prevent_stale_account_pages(response):
+        """Do not let the browser restore authenticated HTML after logout."""
+        if response.mimetype == "text/html" and session.get("user"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        return response
+
     # Teardown
     app.teardown_appcontext(close_db)
 
