@@ -146,11 +146,46 @@
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script>
-  // A page restored from the back/forward cache may still show the old
-  // logged-in navbar after logout. Reload it so Flask checks the session.
+  // A page restored from the back/forward cache must be checked by Flask.
   window.addEventListener('pageshow', event => {
     if (event.persisted) window.location.reload();
   });
+
+  {% if current_user %}
+  // If logout happens in another tab, verify the session when this tab is
+  // opened again. Protected pages are sent directly to the login screen.
+  (() => {
+    const protectedPaths = ['/sell', '/wishlist', '/my-listings', '/profile'];
+    let checkInProgress = false;
+
+    async function verifySession() {
+      if (checkInProgress || document.visibilityState === 'hidden') return;
+      checkInProgress = true;
+      try {
+        const response = await fetch('/api/auth/session', {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        const data = await response.json();
+        if (!data.authenticated) {
+          const isProtected = protectedPaths.some(path =>
+            window.location.pathname === path || window.location.pathname.startsWith(`${path}/`)
+          );
+          window.location.replace(isProtected ? '/login' : window.location.href);
+        }
+      } catch (_) {
+        // A temporary network failure should not force a user out.
+      } finally {
+        checkInProgress = false;
+      }
+    }
+
+    window.addEventListener('focus', verifySession);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') verifySession();
+    });
+  })();
+  {% endif %}
 </script>
 {% block extra_js %}{% endblock %}
 </body>

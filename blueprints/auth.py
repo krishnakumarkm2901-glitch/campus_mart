@@ -271,11 +271,27 @@ def google_callback():
 @auth_bp.route("/auth/logout")
 def logout():
     """Clear session and redirect to login."""
+    session.permanent = False
     session.clear()
+    session.modified = True
     response = redirect(url_for("auth.login_page"))
+    response.delete_cookie(
+        current_app.config.get("SESSION_COOKIE_NAME", "session"),
+        path=current_app.config.get("SESSION_COOKIE_PATH") or "/",
+        domain=current_app.config.get("SESSION_COOKIE_DOMAIN"),
+    )
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
+    response.headers["Clear-Site-Data"] = '"cache"'
+    return response
+
+
+@auth_bp.route("/api/auth/session")
+def auth_session_status():
+    """Let an existing browser tab verify that its login is still valid."""
+    response = jsonify({"authenticated": bool(session.get("user"))})
+    response.headers["Cache-Control"] = "no-store"
     return response
 
 
