@@ -69,6 +69,8 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -79,6 +81,8 @@ body {
   min-height: 100vh;
   font-size: clamp(14px, 1.1vw, 16px);
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 html { height: 100%; }
@@ -105,6 +109,7 @@ input, textarea, select, button {
 /* ── Utility Classes ────────────────────────────────────────────────────────── */
 .container {
   width: min(1280px, 100%);
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 20px;
 }
@@ -140,6 +145,7 @@ input, textarea, select, button {
   background: var(--primary);
   box-shadow: 0 2px 20px rgba(0,0,0,0.25);
   height: var(--navbar-height);
+  width: 100%;
 }
 
 .navbar-inner {
@@ -151,6 +157,8 @@ input, textarea, select, button {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 .navbar-logo {
@@ -850,6 +858,8 @@ textarea.form-control {
 /* ── Page Wrapper ─────────────────────────────────────────────────────────────── */
 .page-wrapper {
   min-height: calc(100vh - var(--navbar-height));
+  width: 100%;
+  min-width: 0;
 }
 
 /* ── Contact Page ───────────────────────────────────────────────────────────── */
@@ -913,6 +923,7 @@ textarea.form-control {
   background: var(--bg-dark);
   color: rgba(255,255,255,0.75);
   padding: 48px 0 24px;
+  width: 100%;
 }
 
 .footer-grid {
@@ -1194,7 +1205,17 @@ textarea.form-control {
   .product-card-image-placeholder { height: 140px; }
 
   .section-title { font-size: 20px; }
-  .container { padding: 0 14px; }
+  .container { width: 100%; padding: 0 16px; }
+  .navbar-inner { padding: 0 16px; gap: 10px; }
+  .navbar-logo-text { font-size: 18px; }
+  .footer { padding-top: 36px; }
+  .footer-grid { gap: 28px; margin-bottom: 32px; }
+}
+
+@media (max-width: 380px) {
+  .navbar-logo { gap: 8px; }
+  .navbar-logo-icon { width: 34px; height: 34px; }
+  .navbar-logo-text { font-size: 16px; }
 }
 
 @media (max-width: 480px) {
