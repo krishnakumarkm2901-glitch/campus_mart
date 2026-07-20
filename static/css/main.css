@@ -850,7 +850,6 @@ textarea.form-control {
 /* ── Page Wrapper ─────────────────────────────────────────────────────────────── */
 .page-wrapper {
   min-height: calc(100vh - var(--navbar-height));
-  padding-bottom: 60px;
 }
 
 /* ── Contact Page ───────────────────────────────────────────────────────────── */
