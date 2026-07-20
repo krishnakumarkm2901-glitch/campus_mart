@@ -4,7 +4,7 @@
 
 const CATEGORIES = [
   'Engineering Books', 'Lab Coats', 'Scientific Calculators',
-  'Drawing Instruments',
+  'Written Notes',
 ];
 
 // ── Animated Counter ─────────────────────────────────────────

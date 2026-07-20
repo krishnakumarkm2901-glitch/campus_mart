@@ -15,7 +15,7 @@ CATEGORIES = [
     "Engineering Books",
     "Lab Coats",
     "Scientific Calculators",
-    "Drawing Instruments",
+    "Written Notes",
 ]
 
 CONDITIONS = ["New", "Like New", "Good", "Fair", "Used"]
@@ -24,6 +24,8 @@ STATUSES = ["pending", "approved", "rejected", "sold"]
 
 def serialize_product(p):
     """Convert MongoDB product doc to JSON-serializable dict."""
+    if p.get("category") == "Drawing Instruments":
+        p["category"] = "Written Notes"
     p["_id"] = str(p["_id"])
     p["seller_id"] = str(p.get("seller_id", ""))
     if "created_at" in p:
@@ -59,7 +61,11 @@ def list_products():
     # Filters
     category = request.args.get("category", "")
     if category:
-        query["category"] = category
+        query["category"] = (
+            {"$in": ["Written Notes", "Drawing Instruments"]}
+            if category == "Written Notes"
+            else category
+        )
 
     condition = request.args.get("condition", "")
     if condition:
@@ -137,6 +143,9 @@ def categories_count():
     ]
     result = list(db.products.aggregate(pipeline))
     counts = {r["_id"]: r["count"] for r in result if r["_id"]}
+    counts["Written Notes"] = (
+        counts.get("Written Notes", 0) + counts.pop("Drawing Instruments", 0)
+    )
     return jsonify(counts)
 
 

@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 {% block title %}NIT-Campus mart – College Marketplace | Buy & Sell Used Items{% endblock %}
-{% block meta_description %}NIT-Campus mart is the trusted college marketplace for students to buy and sell used academic books, lab coats, calculators, and drawing instruments.{% endblock %}
+{% block meta_description %}NIT-Campus mart is the trusted college marketplace for students to buy and sell used academic books, lab coats, calculators, and written notes.{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
@@ -18,7 +18,7 @@
         Verified College Students Only
       </div>
       <h1>Buy & Sell College <span class="accent">Essentials</span><br>Within Your Campus</h1>
-      <p>From textbooks to lab coats, calculators to drawing sets — find everything you need at student-friendly prices.</p>
+      <p>From textbooks to lab coats, calculators to written notes — find everything you need at student-friendly prices.</p>
 
       <!-- Search Box -->
       <div class="hero-search">
@@ -30,7 +30,7 @@
             <option>Engineering Books</option>
             <option>Lab Coats</option>
             <option>Scientific Calculators</option>
-            <option>Drawing Instruments</option>
+            <option>Written Notes</option>
           </select>
           <button class="hero-search-btn" id="hero-search-btn">Search →</button>
         </div>
@@ -87,10 +87,10 @@
         <div class="category-name">Calculators</div>
         <div class="category-count" data-cat-count="Scientific Calculators">Loading…</div>
       </a>
-      <a href="/search?category=Drawing+Instruments" class="category-card">
+      <a href="/search?category=Written+Notes" class="category-card">
         <div class="category-icon cat-drawing"><img src="{{ url_for('static', filename='img/notes printout.jpg') }}"></div>
-        <div class="category-name">Drawing Sets</div>
-        <div class="category-count" data-cat-count="Drawing Instruments">Loading…</div>
+        <div class="category-name">Written Notes</div>
+        <div class="category-count" data-cat-count="Written Notes">Loading…</div>
       </a>
     </div>
   </div>

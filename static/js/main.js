@@ -163,7 +163,7 @@ const CATEGORY_ICONS = {
   'Engineering Books': { icon: '📚', cls: 'cat-books' },
   'Lab Coats': { icon: '🥼', cls: 'cat-lab' },
   'Scientific Calculators': { icon: '🧮', cls: 'cat-calc' },
-  'Drawing Instruments': { icon: '📐', cls: 'cat-drawing' },
+  'Written Notes': { icon: '📝', cls: 'cat-drawing' },
 };
 
 // ── Product Card HTML ───────────────────────────────────────

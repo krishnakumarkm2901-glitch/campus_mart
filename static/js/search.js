@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (catSelect && catSelect.options.length <= 1) {
     [
       'Engineering Books', 'Lab Coats', 'Scientific Calculators',
-      'Drawing Instruments',
+      'Written Notes',
     ].forEach(c => {
       const opt = new Option(c, c);
       catSelect.add(opt);
