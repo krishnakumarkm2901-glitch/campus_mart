@@ -103,7 +103,6 @@ async function loadHomeStats() {
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initHeroSearch();
-  loadProductSection('featured-products', { sort: 'newest' });
   loadProductSection('popular-products', { sort: 'price_asc' });
   loadCategoryCounts();
   loadHomeStats();
