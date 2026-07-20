@@ -1,0 +1,947 @@
+================================================================================
+                    CAMPUSMART - COMPLETE PROJECT DOCUMENTATION
+                        A Beginner's Guide to the Project
+================================================================================
+
+TABLE OF CONTENTS:
+1. Project Overview
+2. Technology Stack
+3. System Requirements
+4. Installation & Setup
+5. Configuration
+6. How to Run the Project
+7. Project Structure Explained
+8. Features Overview
+9. Blueprints (Modules) Explanation
+10. Database (MongoDB)
+11. Authentication System
+12. How the Code Works
+13. Common Commands
+14. Troubleshooting
+15. Deployment
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+CampusMart is a Flask-based web application that works as an online marketplace
+for buying and selling used products, primarily targeted at college/university
+students.
+
+KEY FEATURES:
+- Users can list products for sale
+- Users can browse and search products
+- Shopping cart/wishlist functionality
+- Admin dashboard for product approval
+- Google OAuth authentication
+- Image uploading with Cloudinary
+- User profiles
+- Contact/Support system
+- Reports system for flagging issues
+
+DEPLOYMENT: The app is built to run on Render (a cloud platform) but can also
+run locally on your computer.
+
+================================================================================
+2. TECHNOLOGY STACK
+================================================================================
+
+WHAT DOES EACH TECHNOLOGY DO?
+
+Flask (Python Web Framework):
+  - Main framework for building the web application
+  - Handles routing (URLs), sessions, and request/response
+  - Located in: app.py (main file)
+
+MongoDB (Database):
+  - NoSQL database that stores all data (users, products, etc.)
+  - Data is stored as JSON-like documents
+  - Uses cloud service: MongoDB Atlas
+
+Python:
+  - Programming language the entire backend is written in
+  - Version: 3.x (exact version in requirements.txt)
+
+Google OAuth 2.0:
+  - Allows users to login using their Google account
+  - More secure than username/password
+
+Cloudinary:
+  - Cloud storage for product images
+  - Handles image uploads and hosting
+
+HTML/CSS/JavaScript:
+  - Frontend (what users see in the browser)
+  - HTML: Structure of pages
+  - CSS: Styling and appearance
+  - JavaScript: Interactivity and dynamic features
+
+Gunicorn (Production Server):
+  - Server used when deployed to Render
+  - In development, Flask has a built-in server
+
+Flask-Session:
+  - Stores user login information (sessions)
+  - Keeps users logged in across page refreshes
+
+================================================================================
+3. SYSTEM REQUIREMENTS
+================================================================================
+
+BEFORE YOU START, YOU NEED:
+
+✓ Python 3.8 or higher
+  - Download from: https://www.python.org/downloads/
+  - Windows: Download .exe installer
+  - During installation: CHECK "Add Python to PATH"
+
+✓ Git (for version control)
+  - Download from: https://git-scm.com/
+  - Optional but recommended
+
+✓ A Code Editor (VS Code recommended)
+  - Download from: https://code.visualstudio.com/
+  - This is what you're likely using now
+
+✓ MongoDB Atlas Account (FREE)
+  - Sign up at: https://www.mongodb.com/cloud/atlas
+  - This is where the database is stored
+
+✓ Google OAuth Credentials
+  - Go to: https://console.cloud.google.com/
+  - Create a project and OAuth credentials
+  - Needed for Google login feature
+
+✓ Cloudinary Account (FREE)
+  - Sign up at: https://cloudinary.com/
+  - Needed for image uploads
+
+================================================================================
+4. INSTALLATION & SETUP
+================================================================================
+
+STEP 1: Get the Project Code
+──────────────────────────────
+1. Open Command Prompt or PowerShell
+2. Navigate to where you want the project:
+   cd Desktop
+   
+3. Clone or get the project files (if using Git):
+   git clone [repository-url]
+
+4. Navigate into the project folder:
+   cd used_products
+
+STEP 2: Create a Virtual Environment (IMPORTANT!)
+──────────────────────────────────────────────────
+A virtual environment is an isolated Python setup for THIS project.
+It prevents conflicts with other Python projects on your computer.
+
+On Windows (PowerShell):
+  python -m venv .venv
+  .\.venv\Scripts\Activate.ps1
+
+If you get an error about execution policies, run:
+  Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+
+On Windows (Command Prompt):
+  python -m venv .venv
+  .venv\Scripts\activate.bat
+
+On Mac/Linux:
+  python3 -m venv .venv
+  source .venv/bin/activate
+
+✓ You'll see (.venv) at the start of your command line when activated
+
+STEP 3: Install Python Packages
+────────────────────────────────
+With virtual environment activated:
+
+  pip install -r requirements.txt
+
+This reads the requirements.txt file and installs all needed packages:
+- flask: Web framework
+- flask-cors: Allow cross-origin requests
+- flask-session: User sessions
+- pymongo: MongoDB driver
+- google-auth-oauthlib: Google login
+- cloudinary: Image storage
+- And many others...
+
+STEP 4: Create .env File
+────────────────────────
+The .env file stores secret configuration (passwords, API keys, etc.)
+Never commit this to Git - it contains sensitive information!
+
+Create a file named ".env" in the project root with:
+
+```
+# MongoDB
+MONGO_URI=mongodb+srv://username:password@cluster0.mongodb.net/campusmart?retryWrites=true&w=majority
+MONGO_DB_NAME=campusmart
+
+# Flask
+SECRET_KEY=your-secret-key-here-change-in-production
+DEBUG=True
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-client-id-from-google-cloud.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret-from-google-cloud
+GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloudinary-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+
+# Admin
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your-admin-password
+
+# College email restriction
+ALLOWED_EMAIL_DOMAIN=*  # or specific domain like @students.edu
+
+# Contact email
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+CONTACT_EMAIL=support@campusmart.edu
+```
+
+REPLACE VALUES:
+- Get MONGO_URI from MongoDB Atlas
+- Get Google credentials from Google Cloud Console
+- Get Cloudinary credentials from Cloudinary dashboard
+- MAIL_PASSWORD: Use Gmail App Password (not regular password)
+
+================================================================================
+5. CONFIGURATION EXPLAINED
+================================================================================
+
+The config.py file contains all configuration settings:
+
+FLASK SETTINGS:
+  SECRET_KEY: Encryption key for sessions (change in production!)
+  SESSION_TYPE: "filesystem" = sessions stored as files on disk
+  SESSION_FILE_DIR: Where session files are saved (flask_session/ folder)
+  SESSION_PERMANENT: Remember user login even after closing browser
+  PERMANENT_SESSION_LIFETIME: How long before auto-logout (30 days)
+
+DATABASE:
+  MONGO_URI: Connection string to MongoDB
+  MONGO_DB_NAME: Name of the database
+
+GOOGLE OAUTH:
+  GOOGLE_CLIENT_ID: ID from Google Cloud
+  GOOGLE_CLIENT_SECRET: Secret from Google Cloud
+  GOOGLE_REDIRECT_URI: Where Google redirects after login
+    - Local: http://localhost:5000/auth/google/callback
+    - Production: https://yourdomain.com/auth/google/callback
+
+CLOUDINARY:
+  CLOUDINARY_CLOUD_NAME: Your Cloudinary account name
+  CLOUDINARY_API_KEY: API key
+  CLOUDINARY_API_SECRET: API secret (KEEP SECRET!)
+
+ADMIN:
+  ADMIN_USERNAME: Username for admin login
+  ADMIN_PASSWORD: Password for admin login
+
+EMAIL:
+  MAIL_SERVER: SMTP server (Gmail, Outlook, etc.)
+  MAIL_PORT: SMTP port (usually 587)
+  CONTACT_EMAIL: Support email shown to users
+
+================================================================================
+6. HOW TO RUN THE PROJECT
+================================================================================
+
+BEFORE RUNNING:
+✓ Virtual environment activated (.venv is shown)
+✓ All packages installed (pip install -r requirements.txt)
+✓ .env file created with correct values
+
+OPTION 1: Run Locally (Development)
+────────────────────────────────────
+With virtual environment activated, run:
+
+  python app.py
+
+Or on Mac/Linux:
+
+  python3 app.py
+
+EXPECTED OUTPUT:
+  * Serving Flask app 'app'
+  * Debug mode: on
+  * Running on http://127.0.0.1:5000
+
+THEN:
+1. Open web browser
+2. Go to: http://localhost:5000
+3. You should see the homepage!
+
+To stop the server: Press Ctrl+C in the terminal
+
+OPTION 2: Run with Flask Development Server
+──────────────────────────────────────────────
+Alternative method (more advanced):
+
+  flask run
+
+This is equivalent to python app.py
+
+OPTION 3: Run in Production (Using Gunicorn)
+──────────────────────────────────────────────
+Used when deployed to Render:
+
+  gunicorn app:app
+
+This command is in the Procfile file.
+
+================================================================================
+7. PROJECT STRUCTURE EXPLAINED
+================================================================================
+
+used_products/
+│
+├── app.py ..................... Main Flask application file
+│                               - Creates the app
+│                               - Registers blueprints
+│                               - Defines main routes (/, /product, /sell, etc.)
+│
+├── config.py .................. Configuration file
+│                               - Loads environment variables
+│                               - Sets Flask and database settings
+│
+├── requirements.txt ........... List of Python packages to install
+│                               - pip install -r requirements.txt
+│
+├── Procfile ................... Deployment configuration for Render
+│                               - Tells Render how to run the app
+│
+├── .env ....................... Environment variables (DO NOT COMMIT!)
+│                               - API keys, secrets, passwords
+│
+├── README.md .................. Original project readme
+│
+├── migrate_to_atlas.py ........ Migration script (updating database)
+│                               - Used for moving data or schema updates
+│
+├── blueprints/
+│   ├── __init__.py ............ Makes blueprints a Python package
+│   ├── auth.py ................ Authentication (login/logout/Google OAuth)
+│   ├── products.py ............ Product listings (create, read, update, delete)
+│   ├── admin.py ............... Admin dashboard and management
+│   ├── wishlist.py ............ User wishlist/favorites
+│   ├── reports.py ............ Report/flag inappropriate content
+│   └── contact.py ............ Contact form and support
+│
+├── utils/
+│   ├── __init__.py ............ Makes utils a Python package
+│   ├── db.py .................. Database connection management
+│   ├── cloudinary_utils.py .... Image upload/storage functions
+│   └── decorators.py ......... Decorator functions for authentication
+│
+├── static/ ................... Frontend files (CSS, JavaScript, Images)
+│   ├── css/
+│   │   ├── main.css .......... Main stylesheet
+│   │   ├── home.css .......... Homepage styles
+│   │   ├── product.css ....... Product page styles
+│   │   ├── sell.css .......... Sell form styles
+│   │   ├── auth.css .......... Login/signup styles
+│   │   ├── admin.css ......... Admin dashboard styles
+│   │   └── categories.css .... Categories page styles
+│   ├── img/ .................. Images used in the site
+│   └── js/
+│       ├── main.js ........... Main JavaScript
+│       ├── home.js ........... Homepage functionality
+│       ├── product.js ........ Product detail functionality
+│       ├── search.js ......... Search functionality
+│       ├── wishlist.js ....... Wishlist functionality
+│       ├── admin.js .......... Admin dashboard functionality
+│       ├── sell.js ........... Sell form functionality
+│       └── profile.js ........ User profile functionality
+│
+├── templates/ ................ HTML templates (what users see)
+│   ├── base.html ............ Base template (header, footer, layout)
+│   ├── index.html ........... Homepage
+│   ├── product_detail.html .. Individual product page
+│   ├── search.html .......... Search results page
+│   ├── categories.html ...... Categories listing
+│   ├── sell.html ............ Form to list a product
+│   ├── my_listings.html ..... User's own products
+│   ├── wishlist.html ........ User's favorites
+│   ├── profile.html ......... User profile page
+│   ├── contact.html ......... Contact form
+│   ├── about.html ........... About page
+│   ├── login.html ........... Login page
+│   └── admin/
+│       ├── base.html ........ Admin base template
+│       ├── dashboard.html ... Admin dashboard
+│       ├── products.html .... Product approval page
+│       ├── students.html .... User management page
+│       ├── login.html ....... Admin login
+│       └── daily_report.html . Daily report page
+│
+├── flask_session/ ............ Session storage folder
+│   └── [session files] ...... Stores user login sessions
+│
+└── tests/ .................... Test files
+    └── test_session_persistence.py  Tests for sessions
+
+================================================================================
+8. FEATURES OVERVIEW
+================================================================================
+
+USER FEATURES:
+──────────────
+✓ Sign up / Login using Google OAuth
+✓ Create user profile
+✓ List products for sale
+  - Add title, description, price, category, condition
+  - Upload multiple product images
+  - Set product status (pending, approved, rejected, sold)
+✓ Edit/delete own products
+✓ Search products
+  - Search by keyword
+  - Filter by category
+  - Filter by condition
+  - Filter by price range
+  - Sort by newest, oldest, price
+✓ View product details
+✓ Add products to wishlist/favorites
+✓ View my listings
+✓ Contact support
+✓ Flag/report inappropriate products
+
+ADMIN FEATURES:
+───────────────
+✓ Admin dashboard
+✓ View all products (pending, approved, rejected, sold)
+✓ Approve/reject products
+✓ Delete products
+✓ View all users
+✓ View daily reports
+✓ Manage reported content
+
+TECHNICAL FEATURES:
+────────────────────
+✓ Google OAuth 2.0 authentication
+✓ Session management (stays logged in)
+✓ Image upload to Cloudinary
+✓ MongoDB database
+✓ API endpoints for dynamic frontend
+✓ CORS enabled (cross-origin requests)
+✓ Error handling (404, 500 errors)
+
+================================================================================
+9. BLUEPRINTS (MODULES) EXPLANATION
+================================================================================
+
+Blueprints are like mini-applications within the main Flask app.
+They organize code into logical modules.
+
+1. AUTH BLUEPRINT (blueprints/auth.py)
+────────────────────────────────────────
+Handles user authentication:
+
+ROUTES:
+  GET  /auth/login           → Shows login page
+  POST /auth/google/callback → Handles Google OAuth callback
+  POST /auth/logout          → Logs out user
+  POST /auth/admin-login     → Admin login
+  GET  /auth/validate        → Check if user is logged in
+
+KEY FUNCTIONS:
+  - Google OAuth flow
+  - Session creation
+  - Admin authentication
+  - Email domain validation
+
+2. PRODUCTS BLUEPRINT (blueprints/products.py)
+───────────────────────────────────────────────
+Handles all product operations (CRUD):
+
+ROUTES (API):
+  GET    /api/products           → List products
+  POST   /api/products           → Create new product
+  GET    /api/products/<id>      → Get product details
+  PUT    /api/products/<id>      → Update product
+  DELETE /api/products/<id>      → Delete product
+  GET    /api/products/category/ → Get by category
+
+FILTERING OPTIONS:
+  - Search by keyword
+  - Filter by category, condition, department
+  - Price range filtering
+  - Sorting (newest, oldest, price)
+  - Pagination
+
+3. ADMIN BLUEPRINT (blueprints/admin.py)
+──────────────────────────────────────────
+Handles admin-only operations:
+
+ROUTES:
+  GET    /admin/dashboard            → Admin dashboard page
+  GET    /api/admin/products         → List products (pending/approved/etc.)
+  PUT    /api/admin/products/<id>    → Approve/reject products
+  DELETE /api/admin/products/<id>    → Delete products
+  GET    /api/admin/students         → List all users
+  GET    /api/admin/daily-report     → Daily report data
+
+REQUIRES:
+  - Admin login
+  - @admin_required decorator
+
+4. WISHLIST BLUEPRINT (blueprints/wishlist.py)
+────────────────────────────────────────────────
+Handles user wishlist/favorites:
+
+ROUTES:
+  GET    /api/wishlist              → Get user's wishlist
+  POST   /api/wishlist/<product_id> → Add to wishlist
+  DELETE /api/wishlist/<product_id> → Remove from wishlist
+
+REQUIRES:
+  - User login
+
+5. REPORTS BLUEPRINT (blueprints/reports.py)
+───────────────────────────────────────────────
+Handles product/user reports:
+
+ROUTES:
+  POST /api/reports      → Submit a report
+  GET  /api/reports      → Get reports (admin only)
+  PUT  /api/reports/<id> → Update report status (admin)
+
+ALLOWS USERS TO:
+  - Flag inappropriate products
+  - Report user behavior
+  - Provide report reasons and descriptions
+
+6. CONTACT BLUEPRINT (blueprints/contact.py)
+───────────────────────────────────────────────
+Handles contact/support messages:
+
+ROUTES:
+  POST /api/contact → Submit contact form
+
+FEATURES:
+  - User name, email, subject, message
+  - Stores messages in database
+  - Admin can view contact messages
+
+================================================================================
+10. DATABASE (MONGODB)
+================================================================================
+
+WHAT IS MONGODB?
+─────────────────
+- NoSQL database (different from traditional SQL like MySQL)
+- Data stored as JSON-like documents
+- Flexible schema (documents can have different fields)
+- Cloud-hosted on MongoDB Atlas
+
+COLLECTIONS (Tables):
+─────────────────────
+MongoDB stores data in collections. Think of them like tables in Excel.
+
+MAIN COLLECTIONS IN CAMPUSMART:
+
+1. users
+   ├─ _id (unique ID)
+   ├─ google_id (from Google OAuth)
+   ├─ email
+   ├─ name
+   ├─ profile_picture
+   ├─ phone (optional)
+   ├─ verified (boolean - email verified?)
+   ├─ created_at
+   └─ updated_at
+
+2. products
+   ├─ _id (unique ID)
+   ├─ seller_id (references users._id)
+   ├─ title
+   ├─ description
+   ├─ price
+   ├─ category (Engineering Books, Lab Coats, etc.)
+   ├─ condition (New, Like New, Good, Fair, Used)
+   ├─ department (what course/department)
+   ├─ images (array of image URLs from Cloudinary)
+   ├─ status (pending, approved, rejected, sold)
+   ├─ created_at
+   ├─ updated_at
+   └─ tags (search tags)
+
+3. wishlists
+   ├─ _id (unique ID)
+   ├─ user_id (references users._id)
+   ├─ product_id (references products._id)
+   └─ added_at
+
+4. reports
+   ├─ _id (unique ID)
+   ├─ product_id (references products._id)
+   ├─ reported_by (references users._id)
+   ├─ reason
+   ├─ description
+   ├─ status (pending, reviewed, resolved)
+   ├─ created_at
+   └─ admin_notes
+
+5. contact_messages
+   ├─ _id (unique ID)
+   ├─ name
+   ├─ email
+   ├─ subject
+   ├─ message
+   ├─ status (new, read, replied)
+   └─ created_at
+
+HOW CONNECTIONS WORK:
+──────────────────────
+The database connection is in utils/db.py:
+
+- get_db(): Returns the MongoDB database instance
+  Used in blueprints to access collections
+  
+Example:
+  db = get_db()
+  products = db.products.find({"status": "approved"})
+  users = db.users.find_one({"_id": ObjectId(user_id)})
+
+================================================================================
+11. AUTHENTICATION SYSTEM
+================================================================================
+
+HOW LOGIN WORKS:
+─────────────────
+
+1. USER VISITS WEBSITE
+   ↓
+2. USER CLICKS "LOGIN WITH GOOGLE"
+   ↓
+3. REDIRECTED TO GOOGLE
+   (Google asks user to verify their identity)
+   ↓
+4. USER ENTERS GOOGLE PASSWORD
+   ↓
+5. GOOGLE SENDS USER BACK TO CAMPUSMART
+   With user data (email, name, profile picture)
+   ↓
+6. CAMPUSMART CREATES/UPDATES USER IN DATABASE
+   ↓
+7. SESSION IS CREATED
+   (User's login info stored in flask_session/)
+   ↓
+8. USER IS LOGGED IN
+   (Can now sell products, create wishlist, etc.)
+   ↓
+9. WHILE LOGGED IN:
+   - Session file keeps them logged in
+   - If they close browser: still logged in for 30 days
+   - Can navigate without re-entering password
+   ↓
+10. LOGOUT:
+    - Session file is deleted
+    - User must login again
+
+ADMIN LOGIN:
+─────────────
+Different from user login.
+Admin credentials are in .env file:
+  ADMIN_USERNAME: admin
+  ADMIN_PASSWORD: admin123
+
+Admin logs in on: /admin/login
+
+EMAIL DOMAIN RESTRICTION:
+──────────────────────────
+ALLOWED_EMAIL_DOMAIN setting controls who can sign up:
+  
+  "*" (asterisk)     = Anyone with any Google email can signup
+  "@students.edu"    = Only emails ending with @students.edu
+  "@myuniversity.ac" = Only emails from your university
+
+================================================================================
+12. HOW THE CODE WORKS (EXECUTION FLOW)
+================================================================================
+
+WHEN USER VISITS HOMEPAGE:
+──────────────────────────
+
+1. Browser makes request to http://localhost:5000/
+2. Flask app.py receives request
+3. Matches route @app.route("/")
+4. Calls home() function
+5. Renders "index.html" template
+6. Browser receives HTML and displays page
+
+WHEN USER CREATES A PRODUCT:
+─────────────────────────────
+
+1. User fills form on /sell page
+2. Submits form
+3. JavaScript (sell.js) handles the submission
+4. Uploads images to Cloudinary
+5. Sends product data to /api/products (POST)
+6. products_bp.py receives request
+7. Checks if user is logged in (@api_login_required)
+8. Stores product in MongoDB database
+9. Returns JSON response (success/error)
+10. JavaScript receives response
+11. Shows success message to user
+
+WHEN USER SEARCHES PRODUCTS:
+─────────────────────────────
+
+1. User enters search terms on /search page
+2. JavaScript (search.js) makes request to /api/products?q=keyword
+3. products_bp.py receives request
+4. Queries MongoDB for matching products
+5. Returns list of matching products as JSON
+6. JavaScript displays results on page
+
+WHEN ADMIN APPROVES PRODUCT:
+─────────────────────────────
+
+1. Admin visits /admin/dashboard
+2. Sees pending products
+3. Clicks "Approve" button
+4. JavaScript sends PUT request to /api/admin/products/<id>
+5. admin_bp.py receives request
+6. Updates product status to "approved" in MongoDB
+7. Returns success response
+8. JavaScript updates page (removes from pending list)
+
+================================================================================
+13. COMMON COMMANDS
+================================================================================
+
+ACTIVATE VIRTUAL ENVIRONMENT (Windows):
+  .\.venv\Scripts\Activate.ps1
+
+ACTIVATE VIRTUAL ENVIRONMENT (Mac/Linux):
+  source .venv/bin/activate
+
+DEACTIVATE VIRTUAL ENVIRONMENT:
+  deactivate
+
+INSTALL PACKAGES:
+  pip install -r requirements.txt
+
+INSTALL SINGLE PACKAGE:
+  pip install flask
+
+LIST INSTALLED PACKAGES:
+  pip list
+
+UPDATE PACKAGES:
+  pip install --upgrade package-name
+
+RUN DEVELOPMENT SERVER:
+  python app.py
+
+STOP SERVER:
+  Ctrl+C
+
+VIEW LOGS:
+  See terminal output where app is running
+
+RESET DATABASE:
+  Delete all data from MongoDB Atlas web interface
+  (Go to MongoDB Atlas → Collections → Delete database)
+
+================================================================================
+14. TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "ModuleNotFoundError: No module named 'flask'"
+───────────────────────────────────────────────────────
+CAUSE: Requirements not installed
+SOLUTION:
+  1. Activate virtual environment
+  2. Run: pip install -r requirements.txt
+
+PROBLEM: "MONGO_URI environment variable is missing"
+──────────────────────────────────────────────────────
+CAUSE: .env file not created or MONGO_URI not set
+SOLUTION:
+  1. Create .env file in project root
+  2. Add MONGO_URI=your-connection-string
+  3. Save file
+  4. Restart Flask server
+
+PROBLEM: "ConnectionFailure" or "Connection refused"
+──────────────────────────────────────────────────────
+CAUSE: Cannot connect to MongoDB
+SOLUTION:
+  1. Check MONGO_URI is correct
+  2. Check MongoDB Atlas is running
+  3. Check IP whitelist (MongoDB Atlas settings)
+  4. Try again
+
+PROBLEM: "AttributeError: 'NoneType' object has no attribute 'get'"
+──────────────────────────────────────────────────────────────────
+CAUSE: Usually a required variable is None (missing)
+SOLUTION:
+  1. Check all environment variables in .env
+  2. Check database collections exist
+  3. Check user is logged in (for user-only features)
+
+PROBLEM: Images don't upload
+─────────────────────────────
+CAUSE: Cloudinary credentials missing or wrong
+SOLUTION:
+  1. Check CLOUDINARY_CLOUD_NAME, API_KEY, API_SECRET in .env
+  2. Verify Cloudinary account is active
+  3. Check image file size (max varies by plan)
+
+PROBLEM: Google login doesn't work
+──────────────────────────────────
+CAUSE: Google OAuth credentials wrong or not set
+SOLUTION:
+  1. Check GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env
+  2. Check GOOGLE_REDIRECT_URI matches Google Cloud settings
+  3. Verify OAuth credentials are enabled in Google Cloud
+  4. Check email domain restriction setting
+
+PROBLEM: "Address already in use" error
+────────────────────────────────────────
+CAUSE: Port 5000 is already being used
+SOLUTION:
+  1. Close other Flask instances
+  2. Or change port in app.py: app.run(port=5001)
+
+PROBLEM: Session not persisting (logout on page refresh)
+─────────────────────────────────────────────────────────
+CAUSE: Flask-session not configured correctly
+SOLUTION:
+  1. Check flask_session/ folder exists
+  2. Check SESSION_FILE_DIR in config.py
+  3. Restart Flask server
+
+PROBLEM: "Invalid value for environment variable 'SECRET_KEY'"
+──────────────────────────────────────────────────────────────
+CAUSE: SECRET_KEY not set in .env
+SOLUTION:
+  1. Add to .env: SECRET_KEY=your-secret-key-here
+  2. Use random string (can generate online)
+  3. Restart app
+
+HOW TO DEBUG:
+─────────────
+1. Check terminal output (where Flask is running)
+2. Look for error messages and stack traces
+3. Check browser console (F12 → Console tab)
+4. Add print() statements in Python code:
+   print("Debug:", variable_name)
+5. Check database directly in MongoDB Atlas web interface
+6. Check logs on Render (if deployed)
+
+================================================================================
+15. DEPLOYMENT
+================================================================================
+
+WHAT IS DEPLOYMENT?
+────────────────────
+Taking your local app and making it accessible online 24/7
+(Instead of only when you run it locally)
+
+WHERE TO DEPLOY:
+─────────────────
+The app is built for RENDER (Render.com)
+Other options: Heroku, AWS, PythonAnywhere, etc.
+
+STEPS TO DEPLOY (HIGH LEVEL):
+──────────────────────────────
+1. Push code to GitHub
+2. Create Render account
+3. Connect Render to GitHub repo
+4. Set environment variables in Render
+5. Render automatically deploys
+6. Your app is live online!
+
+PROCFILE:
+──────────
+The file "Procfile" tells Render how to run your app:
+  web: gunicorn app:app
+
+This means: Start a web process using gunicorn, running app:app
+
+IMPORTANT DEPLOYMENT SETTINGS:
+───────────────────────────────
+Before deploying, update in config.py:
+  DEBUG = False (not True)
+  SESSION_COOKIE_SECURE = True
+  SESSION_COOKIE_HTTPONLY = True
+  ALLOWED_HOSTS = ["yourdomain.com"]
+
+Update environment variables in Render:
+  Same as local .env but adjusted for production
+  GOOGLE_REDIRECT_URI = "https://yourdomain.com/auth/google/callback"
+  MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD for emails
+
+================================================================================
+QUICK START CHECKLIST
+================================================================================
+
+□ Python 3.8+ installed
+□ VS Code installed
+□ Project cloned/downloaded
+□ Virtual environment created (.venv)
+□ Virtual environment activated
+□ requirements.txt installed (pip install -r requirements.txt)
+□ .env file created with all variables
+□ MongoDB Atlas account created
+□ Google OAuth credentials created
+□ Cloudinary account created
+□ Database collections created (or auto-created on first use)
+□ Flask app runs without errors (python app.py)
+□ Homepage loads at http://localhost:5000
+□ Google login works
+□ Can create a product
+□ Admin dashboard accessible
+□ Images upload to Cloudinary
+□ Read this documentation fully
+
+================================================================================
+NEED MORE HELP?
+================================================================================
+
+OFFICIAL DOCUMENTATION:
+  Flask: https://flask.palletsprojects.com/
+  MongoDB: https://docs.mongodb.com/
+  Cloudinary: https://cloudinary.com/documentation/
+  Google OAuth: https://developers.google.com/identity
+
+USEFUL RESOURCES:
+  Flask Blueprints: https://flask.palletsprojects.com/blueprints/
+  MongoDB Aggregation: https://docs.mongodb.com/manual/aggregation/
+  RESTful API Design: https://restfulapi.net/
+
+HOW TO DEBUG JAVASCRIPT:
+  1. Open browser (F12 or Ctrl+Shift+I)
+  2. Go to Console tab
+  3. Look for errors in red
+  4. Check Network tab to see API calls
+
+HOW TO VIEW DATABASE:
+  1. Go to MongoDB Atlas (atlas.mongodb.com)
+  2. Login with your account
+  3. Click "Collections"
+  4. View documents in each collection
+  5. Can manually edit/delete documents
+
+================================================================================
+
+This documentation should help you understand how CampusMart works!
+Start by running: python app.py
+Then explore the code at your own pace.
+Good luck!
+
+================================================================================
