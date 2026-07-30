@@ -1,13 +1,20 @@
 """
 Cloudinary helper utilities.
 """
-import cloudinary
-import cloudinary.uploader
+try:
+    import cloudinary
+    import cloudinary.uploader
+except ImportError:  # pragma: no cover - exercised in tests
+    cloudinary = None
+    cloudinary_uploader = None
 from flask import current_app
 
 
 def configure_cloudinary():
     """Configure Cloudinary with app credentials."""
+    if cloudinary is None:
+        raise RuntimeError("Cloudinary package is not installed")
+
     cloudinary.config(
         cloud_name=current_app.config["CLOUDINARY_CLOUD_NAME"],
         api_key=current_app.config["CLOUDINARY_API_KEY"],
