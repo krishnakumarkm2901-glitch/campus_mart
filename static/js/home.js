@@ -39,53 +39,25 @@ function initHeroSearch() {
   input?.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 }
 
-// ── Load Category Counts ─────────────────────────────────────
-async function loadCategoryCounts() {
-  try {
-    const counts = await API.get('/api/products/categories-count');
-    CATEGORIES.forEach(cat => {
-      const el = document.querySelector(`[data-cat-count="${cat}"]`);
-      if (el) {
-        const n = counts[cat] || 0;
-        el.textContent = `${n} item${n !== 1 ? 's' : ''}`;
-      }
-    });
-  } catch (e) { /* non-critical */ }
-}
-
-// ── Load Products Section ────────────────────────────────────
-async function loadProductSection(containerId, params = {}) {
-  const container = document.getElementById(containerId);
+// ── Load Home Summary ───────────────────────────────────────
+async function loadHomeSummary() {
+  const container = document.getElementById('popular-products');
   if (!container) return;
-
-  // Show skeletons
   container.innerHTML = Array(4).fill(buildSkeletonCard()).join('');
 
   try {
-    const data = await API.get('/api/products', { limit: 8, ...params });
-    const products = data.products || [];
-
-    if (!products.length) {
-      container.innerHTML = `
-        <div class="empty-state" style="padding:40px 0">
-          <div class="empty-state-icon">📭</div>
-          <p>No products yet</p>
-        </div>`;
-      return;
-    }
-
-    container.innerHTML = products.map(p => buildProductCard(p)).join('');
-    initWishlistState(); // update heart states
-  } catch (e) {
-    container.innerHTML = `<p style="color:var(--text-muted);padding:20px">Failed to load products.</p>`;
-  }
-}
-
-// ── Load Stats ────────────────────────────────────────────────
-async function loadHomeStats() {
-  try {
-    const data = await API.get('/api/products', { limit: 1 });
+    const data = await API.get('/api/home-summary');
+    const products = data.featured || [];
     const totalEl = document.getElementById('stat-products');
+
+    CATEGORIES.forEach(cat => {
+      const el = document.querySelector(`[data-cat-count="${cat}"]`);
+      if (el) {
+        const n = data.counts?.[cat] || 0;
+        el.textContent = `${n} item${n !== 1 ? 's' : ''}`;
+      }
+    });
+
     if (totalEl && data.total) {
       const observer = new IntersectionObserver(entries => {
         entries.forEach(e => {
@@ -97,13 +69,25 @@ async function loadHomeStats() {
       });
       observer.observe(totalEl);
     }
-  } catch (e) { /* non-critical */ }
+
+    if (!products.length) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding:40px 0">
+          <div class="empty-state-icon">📭</div>
+          <p>No products yet</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = products.map(p => buildProductCard(p)).join('');
+    initWishlistState();
+  } catch (e) {
+    container.innerHTML = `<p style="color:var(--text-muted);padding:20px">Failed to load products.</p>`;
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initHeroSearch();
-  loadProductSection('popular-products', { sort: 'price_asc' });
-  loadCategoryCounts();
-  loadHomeStats();
+  loadHomeSummary();
 });

@@ -52,11 +52,7 @@ def list_products():
     # Text search
     q = request.args.get("q", "").strip()
     if q:
-        query["$or"] = [
-            {"name": {"$regex": q, "$options": "i"}},
-            {"description": {"$regex": q, "$options": "i"}},
-            {"category": {"$regex": q, "$options": "i"}},
-        ]
+        query["$text"] = {"$search": q}
 
     # Filters
     category = request.args.get("category", "")
@@ -101,6 +97,10 @@ def list_products():
     sort = request.args.get("sort", "newest")
     sort_order = sort_map.get(sort, [("created_at", -1)])
 
+    if q and sort == "newest":
+        # Use text relevance score when searching, then fallback to newest.
+        sort_order = [("score", {"$meta": "textScore"}), ("created_at", -1)]
+
     # Pagination
     try:
         page = max(1, int(request.args.get("page", 1)))
@@ -118,6 +118,32 @@ def list_products():
         "page": page,
         "pages": (total + limit - 1) // limit,
         "limit": limit,
+    })
+
+
+@products_bp.route("/api/home-summary", methods=["GET"])
+def home_summary():
+    """Return the home page summary data in one request."""
+    db = get_db()
+    featured = list(
+        db.products.find({"status": "approved"})
+        .sort("price", 1)
+        .limit(8)
+    )
+    counts = list(db.products.aggregate([
+        {"$match": {"status": "approved"}},
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+    ]))
+    counts_dict = {r["_id"]: r["count"] for r in counts if r["_id"]}
+    counts_dict["Written Notes"] = (
+        counts_dict.get("Written Notes", 0) + counts_dict.pop("Drawing Instruments", 0)
+    )
+    total = db.products.count_documents({"status": "approved"})
+
+    return jsonify({
+        "featured": [serialize_product(p) for p in featured],
+        "counts": counts_dict,
+        "total": total,
     })
 
 
