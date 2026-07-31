@@ -22,9 +22,9 @@ class Config:
     SESSION_REFRESH_EACH_REQUEST = True
 
     # MongoDB
-    MONGO_URI = os.getenv("MONGO_URI")
+    MONGO_URI = os.getenv("MONGO_URI") or os.getenv("ATLAS_MONGO_URI") or os.getenv("LOCAL_MONGO_URI")
     if not MONGO_URI:
-        raise RuntimeError("MONGO_URI environment variable is missing.")
+        raise RuntimeError("MONGO_URI environment variable is missing. Set MONGO_URI or ATLAS_MONGO_URI.")
     MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "campusmart")
 
     # Google OAuth
