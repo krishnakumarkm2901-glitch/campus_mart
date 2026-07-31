@@ -222,55 +222,54 @@ def google_callback():
         attempts.pop(received_state, None)
         session["oauth_attempts"] = attempts
         session.modified = True
+
+        # Validate email domain
+        email = id_info.get("email", "")
+        allowed_domain = current_app.config["ALLOWED_EMAIL_DOMAIN"]
+        if allowed_domain != "*" and not email.endswith(allowed_domain):
+            raise ValueError(
+                f"Only {allowed_domain} email addresses are allowed. "
+                "Please use your college email."
+            )
+
+        # Upsert user in MongoDB
+        db = get_db()
+        google_id = id_info["sub"]
+        user = db.users.find_one({"google_id": google_id})
+
+        if not user:
+            new_user = {
+                "google_id": google_id,
+                "name": id_info.get("name", ""),
+                "email": email,
+                "profile_photo": id_info.get("picture", ""),
+                "department": "",
+                "year": "",
+                "phone": "",
+                "created_at": datetime.utcnow(),
+            }
+            result = db.users.insert_one(new_user)
+            new_user["_id"] = result.inserted_id
+            user = new_user
+
+        # Store in session as a persistent login.
+        session.permanent = True
+        session["user"] = {
+            "id": str(user["_id"]),
+            "google_id": google_id,
+            "name": user["name"],
+            "email": email,
+            "profile_photo": user.get("profile_photo", ""),
+            "department": user.get("department", ""),
+            "year": user.get("year", ""),
+            "phone": user.get("phone", ""),
+        }
+
+        return redirect(url_for("main.home"))
     except Exception as e:
+        current_app.logger.exception("Google OAuth callback failed")
         flash(f"Authentication failed: {str(e)}", "error")
         return redirect(url_for("auth.login_page"))
-
-    # Validate email domain
-    email = id_info.get("email", "")
-    allowed_domain = current_app.config["ALLOWED_EMAIL_DOMAIN"]
-    if allowed_domain != "*" and not email.endswith(allowed_domain):
-        flash(
-            f"Only {allowed_domain} email addresses are allowed. "
-            "Please use your college email.",
-            "error",
-        )
-        return redirect(url_for("auth.login_page"))
-
-    # Upsert user in MongoDB
-    db = get_db()
-    google_id = id_info["sub"]
-    user = db.users.find_one({"google_id": google_id})
-
-    if not user:
-        new_user = {
-            "google_id": google_id,
-            "name": id_info.get("name", ""),
-            "email": email,
-            "profile_photo": id_info.get("picture", ""),
-            "department": "",
-            "year": "",
-            "phone": "",
-            "created_at": datetime.utcnow(),
-        }
-        result = db.users.insert_one(new_user)
-        new_user["_id"] = result.inserted_id
-        user = new_user
-
-    # Store in session as a persistent login.
-    session.permanent = True
-    session["user"] = {
-        "id": str(user["_id"]),
-        "google_id": google_id,
-        "name": user["name"],
-        "email": email,
-        "profile_photo": user.get("profile_photo", ""),
-        "department": user.get("department", ""),
-        "year": user.get("year", ""),
-        "phone": user.get("phone", ""),
-    }
-
-    return redirect(url_for("main.home"))
 
 
 @auth_bp.route("/auth/logout")
