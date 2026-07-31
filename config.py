@@ -17,7 +17,8 @@ class Config:
     SESSION_PERMANENT = True
     PERMANENT_SESSION_LIFETIME = timedelta(days=30)
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = not os.getenv("FLASK_DEBUG", "True").lower() == "true"
+    SESSION_COOKIE_SAMESITE = "None" if not os.getenv("FLASK_DEBUG", "True").lower() == "true" else "Lax"
     SESSION_REFRESH_EACH_REQUEST = True
 
     # MongoDB
