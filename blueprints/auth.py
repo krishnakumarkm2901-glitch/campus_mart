@@ -71,6 +71,11 @@ def get_effective_redirect_uri() -> str:
     if callback_origin.lower() != request_origin.lower():
         callback_host = callback.hostname
         request_host = urlsplit(request_origin).hostname
+        if _is_local_host(callback_host) and _is_local_host(request_host):
+            # Use the actual request origin when both callback and current
+            # request are local hosts, so the session cookie stays valid on
+            # the callback host.
+            return f"{request_origin}{url_for('auth.google_callback')}"
         if _is_local_host(callback_host):
             return configured
         if _is_local_host(request_host):
